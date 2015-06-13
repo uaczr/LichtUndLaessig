@@ -23,7 +23,7 @@ PatternGenerator::PatternGenerator(int num_strips, int num_leds) {
 	pattern1[1] = static_cast<Pattern*>(new Balls(frame, colors, "GRB"));
 	pattern2[0] = static_cast<Pattern*>(new Wabern(frame, colors, "GRB"));
 	pattern2[1] = static_cast<Pattern*>(new Balls(frame, colors, "GRB"));
-	pattern2[2] = static_cast<Pattern*>(new Strobe(frame, colors, "GRB"));
+	//pattern2[2] = static_cast<Pattern*>(new Strobe(frame, colors, "GRB"));
 	setColors();
 }
 
@@ -62,7 +62,7 @@ void PatternGenerator::loop(PatternGenerator *generator, boost::asio::deadline_t
 		generator->pattern2[0]->beat(deltat, generator->bpmTime, generator->power, 1, generator->nleds, 2, 100, 1);
 		generator->pattern1[1]->beat(deltat, generator->bpmTime, generator->power, 0, generator->nleds, 0, 8, 0);
 		generator->pattern2[1]->beat(deltat, generator->bpmTime, generator->power, 1, generator->nleds, 0, 8, 0);
-		generator->pattern2[2]->beat(deltat, generator->bpmTime, generator->power, 1, generator->nleds, 0, 15, 0);
+		//generator->pattern2[2]->beat(deltat, generator->bpmTime, generator->power, 1, generator->nleds, 0, 15, 0);
 	}
 	else
 	{
@@ -71,7 +71,7 @@ void PatternGenerator::loop(PatternGenerator *generator, boost::asio::deadline_t
 		generator->pattern2[0]->noBeat();
 		generator->pattern1[1]->noBeat();
 		generator->pattern2[1]->noBeat();
-		generator->pattern2[2]->noBeat();
+		//generator->pattern2[2]->noBeat();
 	}
 	ledscape_wait(generator->leds);
 	ledscape_draw(generator->leds, 0);
