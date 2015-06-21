@@ -91,17 +91,17 @@ ledscape_draw(
 {
 
 	leds->ws281x_0->pixels_dma = leds->pru0->ddr_addr + leds->frame_size * frame;
-	leds->ws281x_1->pixels_dma = leds->pru0->ddr_addr + leds->frame_size * frame;
+	//leds->ws281x_1->pixels_dma = leds->pru0->ddr_addr + leds->frame_size * frame;
 
 	// Wait for any current command to have been acknowledged
-	while (leds->ws281x_0->command || leds->ws281x_1->command);
+	while (leds->ws281x_0->command /*|| leds->ws281x_1->command*/);
 
 	// Zero the responses so we can wait for them
 	leds->ws281x_0->response = leds->ws281x_1->response = 0;
 
 	// Send the start command
 	leds->ws281x_0->command = 1;
-	leds->ws281x_1->command = 1;
+	/*leds->ws281x_1->command = 1;*/
 }
 
 
@@ -122,7 +122,7 @@ ledscape_wait(
 		// 	leds->ws281x_1->command, leds->ws281x_1->response
 		// );
 
-		if (leds->ws281x_0->response && leds->ws281x_1->response) return;
+		if (leds->ws281x_0->response /*&& leds->ws281x_1->response*/) return;
 	}
 }
 
@@ -132,6 +132,15 @@ ledscape_t * ledscape_init( unsigned num_pixels ) {
 		num_pixels,
 		"pru/bin/ws281x-original-ledscape-pru0.bin",
 		"pru/bin/ws281x-original-ledscape-pru1.bin"
+	);
+}
+
+ledscape_t * ledscape_init_dmx( unsigned num_pixels ) {
+	return ledscape_init_with_programs(
+		num_pixels,
+		"pru/bin/ws281x-original-ledscape-pru0.bin",
+		/*"pru/bin/ws281x-original-ledscape-pru0.bin"*/
+		"pru/bin/dmxrec.bin"
 	);
 }
 

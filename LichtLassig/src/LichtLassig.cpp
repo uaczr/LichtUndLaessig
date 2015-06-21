@@ -27,7 +27,7 @@ using namespace Marsyas;
 
 
 int main() {
-	PatternGenerator generator(48, 20);
+	PatternGenerator generator(48, 100);
 	generator.running = true;
 	boost::asio::io_service io;
 	boost::asio::deadline_timer t(io, boost::posix_time::milliseconds(5));

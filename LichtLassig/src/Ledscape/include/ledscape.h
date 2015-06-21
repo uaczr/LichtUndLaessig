@@ -69,7 +69,7 @@ typedef enum {
 extern ledscape_t * ledscape_init(
 unsigned num_pixels
 );
-
+ledscape_t * ledscape_init_dmx( unsigned num_pixels );
 extern ledscape_t * ledscape_init_with_programs(
 	unsigned num_pixels,
 	const char* pru0_program_filename,
