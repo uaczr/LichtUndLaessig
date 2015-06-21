@@ -9,6 +9,7 @@
 #define LICHTSTEUERUNG_PATTERNGENERATOR_H_
 extern "C"{
 #include "../Ledscape/include/ledscape.h"
+#include <stdint.h>
 }
 #include <boost/thread/mutex.hpp>
 #include <boost/asio.hpp>
@@ -20,6 +21,28 @@ extern "C"{
 #include "Balls.h"
 #include "Strobe.h"
 
+typedef struct dmxChannels
+{
+	// in the DDR shared with the PRU
+	uintptr_t pixels_dma;
+
+	// Length in pixels of the longest LED strip.
+	unsigned num_pixels;
+
+	// write 1 to start, 0xFF to abort. will be cleared when started
+	volatile unsigned command;
+
+	// will have a non-zero response written when done
+	volatile unsigned response;
+
+	volatile unsigned int channel1;
+	volatile unsigned int channel2;
+	volatile unsigned int channel3;
+	volatile unsigned int channel4;
+	volatile unsigned int channel5;
+	volatile unsigned int channel6;
+} __attribute__((__packed__)) dmxChannels_t;
+
 class PatternGenerator {
 	Pattern** pattern1;
 	Pattern** pattern2;
@@ -28,6 +51,8 @@ class PatternGenerator {
 	boost::mutex mpower;
 	bool beat;
 	ledscape_t* leds;
+	dmxChannels_t* DMXInfo;
+	uint8_t* inDMX;
 	ledscape_frame_t* frame;
 	int nstrips;
 	int nleds;

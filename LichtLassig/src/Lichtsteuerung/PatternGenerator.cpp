@@ -14,6 +14,10 @@ PatternGenerator::PatternGenerator(int num_strips, int num_leds) {
 	running = false;
 	leds = ledscape_init_dmx(nleds);
 	frame = ledscape_frame(leds, 0);
+	DMXInfo = (dmxChannels_t*)leds->pru1->data_ram;
+	inDMX = (uint8_t*)leds->pru1->data_ram;
+	inDMX += 40;
+
 	bpmTime = 500;
 
 	colors = new ledscape_pixel_t[20];
@@ -79,6 +83,17 @@ void PatternGenerator::loop(PatternGenerator *generator, boost::asio::deadline_t
 	generator->mbeat.lock();
 	generator->beat = false;
 	generator->mbeat.unlock();
+	generator->DMXInfo->command = 1;
+	/*cout << generator->DMXInfo->command << endl;
+	cout << generator->DMXInfo->channel1 << endl;
+	cout << generator->DMXInfo->channel2 << endl;
+	cout << generator->DMXInfo->channel3 << endl;
+	cout << generator->DMXInfo->channel4 << endl;
+	cout << generator->DMXInfo->channel5 << endl << endl;
+	for(int j = 0; j < 7; j++){
+		cout << (int)generator->inDMX[j] << "\t";
+	}
+	cout << endl;*/
 
 }
 
