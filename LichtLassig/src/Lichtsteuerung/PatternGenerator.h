@@ -58,6 +58,7 @@ class PatternGenerator {
 	int nleds;
 	double bpmTime;
 	double power;
+	double deltat;
 	ledscape_pixel_t* colors;
 	void setColors();
 public:
@@ -65,7 +66,8 @@ public:
 	PatternGenerator(int num_strips, int num_leds);
 	virtual ~PatternGenerator();
 	static void sigBeat(PatternGenerator *generator, double ibpmTime, double ipower);
-	static void loop(PatternGenerator *generator, boost::asio::deadline_timer* t, int deltat);
+	static void loop(PatternGenerator *generator, boost::asio::deadline_timer* t, int ideltat);
+	void switcher(bool beat);
 	void frameBlack();
 	void frameWhite();
 };

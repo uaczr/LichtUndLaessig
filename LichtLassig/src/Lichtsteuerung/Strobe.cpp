@@ -47,10 +47,9 @@ void Strobe::noEvent(){
 }
 
 void Strobe::tripleShot(){
-
-	if(counter%speed <= 3 && n < 3 && power > 1.1)
+	if(counter%speed <= 5  && n < 3)
 	{
-		///cout << "Fuck" <<endl;
+
 		for(int i = 0; i < numLeds; i++){
 			ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i, colors[color].a, colors[color].b, colors[color].c );
 		}
