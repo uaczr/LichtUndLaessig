@@ -13,10 +13,26 @@ extern "C"{
 #include "../Ledscape/include/ledscape.h"
 }
 using namespace std;
+struct pixel{
+	bool active;
+	int color;
+
+	pixel(){
+		active = false;
+		color = 0;
+	}
+	pixel operator=(pixel a){
+		a.active = active;
+		a.color = color;
+		return a;
+	}
+};
 class Pattern {
 protected:
 	int targetStrip;
 	int numLeds;
+	int numLedsProBar;
+	int numBars;
 	int deltat;
 	double bpm;
 	int counter;
@@ -30,12 +46,13 @@ protected:
 	char* ColorOrder;
 	virtual void event() = 0;
 	virtual void noEvent() = 0;
+	double linearApp(double amp1, double amp2, double deltax, double x);
 
 public:
 	Pattern();
-	Pattern(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder);
+	Pattern(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder, int nBars, int nLedsProBar);
 	virtual ~Pattern();
-	void beat(int ideltat, double ibpm, double ipower, int iStrip, int iLeds, int iColor, int speed, int type);
+	void beat(int ideltat, double ibpm, double ipower, int iStrip, int iColor, int speed, int type);
 	void noBeat();
 };
 

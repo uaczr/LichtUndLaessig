@@ -14,7 +14,7 @@ class Strobe : public Pattern{
 	void noEvent();
 	void tripleShot();
 public:
-	Strobe(ledscape_frame_t* iframe, ledscape_pixel_t* icolors, char* iColorOrder);
+	Strobe(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder, int nBars, int nLedsProBar);
 	virtual ~Strobe();
 };
 

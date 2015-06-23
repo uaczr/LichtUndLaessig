@@ -7,7 +7,7 @@
 
 #include "Strobe.h"
 
-Strobe::Strobe(ledscape_frame_t* iframe, ledscape_pixel_t* icolors, char* iColorOrder) {
+Strobe::Strobe(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder, int nBars, int nLedsProBar) {
 	// TODO Auto-generated constructor stub
 	ColorOrder = iColorOrder;
 	colors = icolors;
@@ -15,11 +15,15 @@ Strobe::Strobe(ledscape_frame_t* iframe, ledscape_pixel_t* icolors, char* iColor
 	deltat = 5;
 	bpm = 500;
 	counter = 0;
-	numLeds = 100;
+	numBars = nBars;
+	numLedsProBar = nLedsProBar;
+	numLeds = nBars*nLedsProBar;
 	targetStrip = 1;
-	speed = 500;
-	targetCycles = bpm/deltat;
 	power = 1;
+	color = 1;
+	type = 0;
+	speed = 100;
+	targetCycles = bpm/deltat;
 	n = 0;
 }
 

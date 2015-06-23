@@ -23,10 +23,11 @@ PatternGenerator::PatternGenerator(int num_strips, int num_leds) {
 	colors = new ledscape_pixel_t[20];
 	pattern1 = new Pattern*[10];
 	pattern2 = new Pattern*[10];
-	pattern1[0] = static_cast<Pattern*>(new Strobe(frame, colors, "GRB"));
-	//pattern1[1] = static_cast<Pattern*>(new Balls(frame, colors, "GRB"));
-	//pattern1[1] = static_cast<Pattern*>(new Balls(frame, colors, "GRB"));
-	//pattern2[0] = static_cast<Pattern*>(new Strobe(frame, colors, "GRB"));
+	pattern1[0] = static_cast<Pattern*>(new Wabern(frame, colors, "GRB", 3, 18));
+	pattern1[1] = static_cast<Pattern*>(new Balls(frame, colors, "GRB",5, 18));
+	pattern2[0] = static_cast<Pattern*>(new Wabern(frame, colors, "GRB", 3, 18));
+	pattern2[1] = static_cast<Pattern*>(new Balls(frame, colors, "GRB", 5, 18));
+	//pattern2[2] = static_cast<Pattern*>(new Strobe(frame, colors, "GRB"));
 	setColors();
 }
 
@@ -58,23 +59,24 @@ void PatternGenerator::loop(PatternGenerator *generator, boost::asio::deadline_t
 		t->async_wait(boost::bind(PatternGenerator::loop, generator, t, ideltat));
 	}
 	//std::cout << "loop" << std::endl;
+	generator->frameBlack();
 	generator->mbeat.try_lock();
 	if(generator->beat)
 	{
 		generator->mbeat.unlock();
-		//generator->pattern1[0]->beat(ideltat, generator->bpmTime, generator->power, 0, generator->nleds, 2, (int)generator->inDMX[1], 1);
-		generator->pattern1[0]->beat(ideltat, generator->bpmTime, generator->power, 1, generator->nleds, 2, 15, 0);
-		//generator->pattern1[1]->beat(deltat, generator->bpmTime, generator->power, 0, generator->nleds, 0, 8, 0);
-		//generator->pattern2[1]->beat(deltat, generator->bpmTime, generator->power, 1, generator->nleds, 0, 8, 0);
-		//generator->pattern2[2]->beat(deltat, generator->bpmTime, generator->power, 1, generator->nleds, 0, 15, 0);
+		//generator->pattern1[0]->beat(ideltat, generator->bpmTime, generator->power, 0, 3, 100, 3);
+		generator->pattern1[1]->beat(ideltat, generator->bpmTime, generator->power, 0, 4, 8, 0);
+		//generator->pattern2[0]->beat(ideltat, generator->bpmTime, generator->power, 1, 2, 100, 3);
+		generator->pattern2[1]->beat(ideltat, generator->bpmTime, generator->power, 1, 2, 8, 0);
+		//generator->pattern2[2]->beat(ideltat, generator->bpmTime, generator->power, 1, generator->nleds, 2, 25, 0);
 	}
 	else
 	{
 		generator->mbeat.unlock();
-		generator->pattern1[0]->noBeat();
+		//generator->pattern1[0]->noBeat();
+		generator->pattern1[1]->noBeat();
 		//generator->pattern2[0]->noBeat();
-		//generator->pattern1[1]->noBeat();
-		//generator->pattern2[1]->noBeat();
+		generator->pattern2[1]->noBeat();
 		//generator->pattern2[2]->noBeat();
 	}
 	//cout << "new" << endl;
@@ -100,11 +102,11 @@ void PatternGenerator::loop(PatternGenerator *generator, boost::asio::deadline_t
 void PatternGenerator::frameBlack()
 {
 
-	/*for(int i = 0; i < 2; i++){
+	for(int i = 0; i < 2; i++){
 		for(int j = 0; j < nleds; j++){
 			ledscape_set_color(frame, COLOR_ORDER_BRG, i, j, 0, 0, 0);
 		}
-	}*/
+	}
 
 
 }
@@ -156,14 +158,14 @@ void PatternGenerator::switcher(bool beat){
 		if(inDMX[2] > 0*255/3)
 		{
 			if(beat)
-				pattern1[0]->beat(deltat, bpmTime, power, 0, nleds, 2, (int)inDMX[3], 1);
+				pattern1[0]->beat(deltat, bpmTime, power, 0, 2, (int)inDMX[3], 1);
 			else
 				pattern1[0]->noBeat();
 		}
 		if(inDMX[2] > 1*255/3)
 		{
 			if(beat)
-				pattern1[1]->beat(deltat, bpmTime, power, 0, nleds, 2, (int)inDMX[3], 1);
+				pattern1[1]->beat(deltat, bpmTime, power, 0, 2, (int)inDMX[3], 1);
 			else
 				pattern1[1]->noBeat();
 		}
