@@ -59,3 +59,8 @@ double Pattern::linearApp(double amp1, double amp2, double deltax, double x){
 
 	return a;
 }
+double Pattern::linearAppPM(double amp1, double amp2, double deltax, double x){
+	double a = (((amp2-amp1)/deltax)*x + amp1);
+
+	return a;
+}

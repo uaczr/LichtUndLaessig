@@ -21,8 +21,15 @@ class Balls : public Pattern{
 	void noEvent();
 	void event();
 	int findEmpty();
-	void standard();
+	void rising();
+	void falling();
+	void exploding();
+	void explodingDimmed();
+	void spring();
 	void drawEqual();
+	void drawColorEqual();
+
+	int springAmps[5];
 
 public:
 	Balls(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder, int nBars, int nLedsProBar);

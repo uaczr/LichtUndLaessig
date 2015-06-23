@@ -16,15 +16,32 @@ using namespace std;
 struct pixel{
 	bool active;
 	int color;
+	int r;
+	int g;
+	int b;
 
 	pixel(){
 		active = false;
 		color = 0;
+		r = 0;
+		g = 0;
+		b = 0;
 	}
-	pixel operator=(pixel a){
-		a.active = active;
-		a.color = color;
-		return a;
+	pixel& operator=(pixel a){
+		active = a.active;
+		color = a.color;
+		r = a.r;
+		g = a.g;
+		b = a.b;
+		return *this;
+	}
+	pixel& set(bool act, int col, int a, int b, int c){
+		active = act;
+		color = col;
+		r = a;
+		g = b;
+		this->b = c;
+		return *this;
 	}
 };
 class Pattern {
@@ -47,7 +64,7 @@ protected:
 	virtual void event() = 0;
 	virtual void noEvent() = 0;
 	double linearApp(double amp1, double amp2, double deltax, double x);
-
+	double linearAppPM(double amp1, double amp2, double deltax, double x);
 public:
 	Pattern();
 	Pattern(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder, int nBars, int nLedsProBar);
