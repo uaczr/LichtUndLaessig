@@ -24,7 +24,18 @@ Strobe::Strobe(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColo
 	type = 0;
 	speed = 100;
 	targetCycles = bpm/deltat;
+	pliste = new pixel[nLedsProBar];
+	switchcounter = 0;
+	for(int i = 0; i < nLedsProBar; i++){
+		pliste[i].active = false;
+		pliste[i].color = 0;
+	}
 	n = 0;
+	strobecounter = 0;
+	pliste = new pixel[nLedsProBar];
+	for(int i = 0; i < nLedsProBar; i++){
+		pliste[i].set(true,0,0,0,0);
+	}
 }
 
 Strobe::~Strobe() {
@@ -33,18 +44,32 @@ Strobe::~Strobe() {
 
 void Strobe::event(){
 	n = 0;
+	strobecounter++;
 	switch(type){
 	case 0:
 		tripleShot();
+		break;
+	case 1:
+		standard();
+		break;
+	case 2:
+		switched();
 		break;
 
 	}
 }
 
 void Strobe::noEvent(){
+	strobecounter++;
 	switch(type){
 	case 0:
 		tripleShot();
+		break;
+	case 1:
+		standard();
+		break;
+	case 2:
+		switched();
 		break;
 
 	}
@@ -66,4 +91,51 @@ void Strobe::tripleShot(){
 			ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i, 0, 0, 0 );
 		}
 	}
+}
+
+void Strobe::standard(){
+	for(int i = 0; i < numLedsProBar; i++){
+		pliste[i].set(false, color, colors[color].a, colors[color].b, colors[color].c);
+	}
+
+	if(strobecounter%(speed) < 3){
+		for(int i = 0; i < numLedsProBar; i++){
+			pliste[i].active = true;
+		}
+	}
+	drawEqual();
+}
+void Strobe::switched(){
+	for(int i = 0; i < numLedsProBar; i++){
+		pliste[i].set(false, color, colors[color].a, colors[color].b, colors[color].c);
+	}
+
+	if(strobecounter%(speed) == 0)
+		switchcounter++;
+
+	if(strobecounter%(speed) < 3){
+		if(switchcounter%2 == 0){
+			for(int i = 0; i < numBars; i+=2){
+				for(int j = 0; j < numLedsProBar; j++){
+
+
+						ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i*numLedsProBar+j,colors[pliste[j].color].a, colors[pliste[j].color].b,colors[pliste[j].color].c );
+
+				}
+			}
+		}
+		else{
+			for(int i = 1; i < numBars; i+=2){
+				for(int j = 0; j < numLedsProBar; j++){
+
+
+						ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i*numLedsProBar+j,colors[pliste[j].color].a, colors[pliste[j].color].b,colors[pliste[j].color].c );
+
+				}
+			}
+		}
+
+	}
+
+
 }

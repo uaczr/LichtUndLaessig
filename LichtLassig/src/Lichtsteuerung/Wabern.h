@@ -12,7 +12,7 @@
 class Wabern: public Pattern {
 private:
 	uint8_t count;
-
+	int top;
 
 	void event();
 	void noEvent();
@@ -20,6 +20,7 @@ private:
 	void Linear();
 	void Switched();
 	void Circle();
+	void Energy();
 public:
 	Wabern(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder, int nBars, int nLedsProBar);
 	virtual ~Wabern();

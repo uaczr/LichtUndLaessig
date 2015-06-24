@@ -24,6 +24,11 @@ Balls::Balls(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorO
 	type = 0;
 	speed = 100;
 	targetCycles = bpm/deltat;
+	raindrops = new bool[numBars*numLedsProBar];
+	raintime = 0;
+	for(int i = 0; i < numBars*numLedsProBar; i++){
+		raindrops[i] = false;
+	}
 	pliste = new pixel[nLedsProBar];
 	for(int i = 0; i < nLedsProBar; i++){
 		pliste[i].active = false;
@@ -36,6 +41,7 @@ Balls::Balls(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorO
 		liste[i].position = 0;
 	}
 	power = 1;
+	raincounter = 0;
 }
 
 Balls::~Balls() {
@@ -53,6 +59,7 @@ int Balls::findEmpty(){
 }
 
 void Balls::event(){
+	raincounter++;
 	switch(type)
 	{
 	case 0:
@@ -69,10 +76,14 @@ void Balls::event(){
 		break;
 	case 4:
 		spring();
+		break;
+	case 5:
+		raining();
 		break;
 	}
 }
 void Balls::noEvent(){
+	raincounter++;
 	switch(type)
 	{
 	case 0:
@@ -89,6 +100,9 @@ void Balls::noEvent(){
 		break;
 	case 4:
 		spring();
+		break;
+	case 5:
+		raining();
 		break;
 	}
 }
@@ -132,6 +146,40 @@ void Balls::falling(){
 
 	}
 	drawEqual();
+}
+
+void Balls::raining(){
+	if(raincounter % 311 == raintime){
+		raintime = rand() % 311;
+		raindrops[0] = true;
+	}
+	if(raincounter % 20 == 0){
+		bool old, act;
+		old = raindrops[0];
+		raindrops[0] = false;
+		for(int i = 1; i < numBars* numLedsProBar-1; i++){
+			act = raindrops[i];
+			raindrops[i] = old;
+			if(old){
+				//ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i-1, 0.05*colors[color].a, 0.05*colors[color].b, 0.05*colors[color].c );
+				ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i, 0.2*colors[color].a, 0.2*colors[color].b, 0.2*colors[color].c );
+				ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i+1, 1*colors[color].a, 1*colors[color].b, 1*colors[color].c );
+
+			}
+			old = act;
+		}
+	}
+	else
+	{
+		for(int i = 2; i < numBars* numLedsProBar-1; i++){
+			if(raindrops[i]){
+				//ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i-2, 0.05*colors[color].a, 0.05*colors[color].b, 0.05*colors[color].c );
+				ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i-1, 0.05*colors[color].a, 0.05*colors[color].b, 0.05*colors[color].c );
+				ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i, 0.1*colors[color].a, 0.1*colors[color].b, 0.1*colors[color].c );
+				ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i+1, 1*colors[color].a, 1*colors[color].b, 1*colors[color].c );
+			}
+		}
+	}
 }
 
 void Balls::exploding(){
@@ -232,21 +280,4 @@ void Balls::spring(){
 
 }
 
-void Balls::drawEqual(){
-	for(int i = 0; i < numBars; i++){
-		for(int j = 0; j < numLedsProBar; j++){
-			if(pliste[j].active){
-				ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i*numLedsProBar+j, colors[pliste[j].color].a, colors[pliste[j].color].b, colors[pliste[j].color].c );
-			}
-		}
-	}
-}
-void Balls::drawColorEqual(){
-	for(int i = 0; i < numBars; i++){
-		for(int j = 0; j < numLedsProBar; j++){
-			if(pliste[j].active){
-				ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i*numLedsProBar+j, pliste[j].r, pliste[j].g, pliste[j].b );
-			}
-		}
-	}
-}
+

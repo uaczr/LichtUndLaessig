@@ -65,6 +65,9 @@ protected:
 	virtual void noEvent() = 0;
 	double linearApp(double amp1, double amp2, double deltax, double x);
 	double linearAppPM(double amp1, double amp2, double deltax, double x);
+	void drawEqual();
+	void drawColorEqual();
+	pixel* pliste;
 public:
 	Pattern();
 	Pattern(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder, int nBars, int nLedsProBar);

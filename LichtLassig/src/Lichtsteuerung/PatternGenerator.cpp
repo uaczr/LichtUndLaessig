@@ -24,10 +24,10 @@ PatternGenerator::PatternGenerator(int num_strips, int num_leds) {
 	pattern1 = new Pattern*[10];
 	pattern2 = new Pattern*[10];
 	pattern1[0] = static_cast<Pattern*>(new Wabern(frame, colors, "GRB", 3, 18));
-	pattern1[1] = static_cast<Pattern*>(new Balls(frame, colors, "GRB",5, 18));
+	pattern1[1] = static_cast<Pattern*>(new Balls(frame, colors, "GRB",3, 18));
 	pattern2[0] = static_cast<Pattern*>(new Wabern(frame, colors, "GRB", 3, 18));
-	pattern2[1] = static_cast<Pattern*>(new Balls(frame, colors, "GRB", 5, 18));
-	pattern2[2] = static_cast<Pattern*>(new Strobe(frame, colors, "GRB",5, 18));
+	pattern2[1] = static_cast<Pattern*>(new Balls(frame, colors, "GRB", 3, 18));
+	pattern2[2] = static_cast<Pattern*>(new Strobe(frame, colors, "GRB",3, 18));
 	setColors();
 }
 
@@ -64,20 +64,20 @@ void PatternGenerator::loop(PatternGenerator *generator, boost::asio::deadline_t
 	if(generator->beat)
 	{
 		generator->mbeat.unlock();
-		generator->pattern1[0]->beat(ideltat, generator->bpmTime, generator->power, 0, 2, 200, 1);
-		generator->pattern1[1]->beat(ideltat, generator->bpmTime, generator->power, 0, 1, 5, 4);
-		generator->pattern2[0]->beat(ideltat, generator->bpmTime, generator->power, 1, 2, 200, 1);
-		generator->pattern2[1]->beat(ideltat, generator->bpmTime, generator->power, 1, 1, 5, 4);
-		//generator->pattern2[2]->beat(ideltat, generator->bpmTime, generator->power, 1, 0, 50, 0);
+		//generator->pattern1[0]->beat(ideltat, generator->bpmTime, generator->power, 0, 2, 150, 4);
+		//generator->pattern1[1]->beat(ideltat, generator->bpmTime, generator->power, 0, 2, 20, 0);
+		//generator->pattern2[0]->beat(ideltat, generator->bpmTime, generator->power, 1, 2, 150, 4);
+		//generator->pattern2[1]->beat(ideltat, generator->bpmTime, generator->power, 1, 2, 20, 0);
+		generator->pattern2[2]->beat(ideltat, generator->bpmTime, generator->power, 0, 0, 50, 2);
 	}
 	else
 	{
 		generator->mbeat.unlock();
-		generator->pattern1[0]->noBeat();
-		generator->pattern1[1]->noBeat();
-		generator->pattern2[0]->noBeat();
-		generator->pattern2[1]->noBeat();
-		//generator->pattern2[2]->noBeat();
+		//generator->pattern1[0]->noBeat();
+		//generator->pattern1[1]->noBeat();
+		//generator->pattern2[0]->noBeat();
+		//generator->pattern2[1]->noBeat();
+		generator->pattern2[2]->noBeat();
 	}
 	//cout << "new" << endl;
 	ledscape_wait(generator->leds);

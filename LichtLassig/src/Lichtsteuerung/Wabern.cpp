@@ -24,6 +24,12 @@ Wabern::Wabern(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColo
 	type = 0;
 	speed = 100;
 	targetCycles = bpm/deltat;
+	pliste = new pixel[nLedsProBar];
+	for(int i = 0; i < nLedsProBar; i++){
+		pliste[i].active = false;
+		pliste[i].color = 0;
+	}
+	top = 0;
 }
 
 Wabern::~Wabern() {
@@ -47,6 +53,10 @@ void Wabern::event(){
 	case 3:
 		Circle();
 		break;
+	case 4:
+		Energy();
+		break;
+
 	}
 	//
 }
@@ -64,6 +74,9 @@ void Wabern::noEvent(){
 		break;
 	case 3:
 		Circle();
+		break;
+	case 4:
+		Energy();
 		break;
 
 	}
@@ -158,4 +171,23 @@ void Wabern::Circle(){
 
 	}
 
+}
+void Wabern::Energy(){
+	for(int i = 0; i < numLedsProBar; i++){
+		pliste[i].set(false, color, colors[color].a, colors[color].b, colors[color].c);
+	}
+	if(counter == 0){
+		top = power * numLedsProBar/2;
+		if(top >= numLedsProBar)
+			top = numLedsProBar-1;
+	}
+	int acttop = linearApp(top, 0, targetCycles, counter);
+	for(int i = 0; i <= acttop; i++){
+		pliste[i].active = true;
+		if(i>numLedsProBar/2){
+			pliste[i].color = 4;
+		}
+
+	}
+	drawEqual();
 }

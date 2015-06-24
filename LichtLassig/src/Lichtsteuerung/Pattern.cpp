@@ -64,3 +64,24 @@ double Pattern::linearAppPM(double amp1, double amp2, double deltax, double x){
 
 	return a;
 }
+void Pattern::drawEqual(){
+	for(int i = 0; i < numBars; i++){
+		for(int j = 0; j < numLedsProBar; j++){
+			//cout << i <<" "<< numLedsProBar<<" " << j << endl;
+			if(pliste[j].active){
+
+				ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i*numLedsProBar+j,colors[pliste[j].color].a, colors[pliste[j].color].b,colors[pliste[j].color].c );
+			}
+		}
+	}
+}
+void Pattern::drawColorEqual(){
+	for(int i = 0; i < numBars; i++){
+		for(int j = 0; j < numLedsProBar; j++){
+
+			if(pliste[j].active){
+				ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i*numLedsProBar+j, pliste[j].r, pliste[j].g, pliste[j].b );
+			}
+		}
+	}
+}

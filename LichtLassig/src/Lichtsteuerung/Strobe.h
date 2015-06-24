@@ -9,10 +9,16 @@
 #define LICHTSTEUERUNG_STROBE_H_
 #include "Pattern.h"
 class Strobe : public Pattern{
+private:
 	int n;
+	long strobecounter;
+	int switchcounter;
 	void event();
 	void noEvent();
 	void tripleShot();
+	void standard();
+	void switched();
+
 public:
 	Strobe(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder, int nBars, int nLedsProBar);
 	virtual ~Strobe();

@@ -17,7 +17,7 @@ struct ball{
 
 class Balls : public Pattern{
 	ball liste[LENGTH];
-	pixel* pliste;
+
 	void noEvent();
 	void event();
 	int findEmpty();
@@ -26,10 +26,12 @@ class Balls : public Pattern{
 	void exploding();
 	void explodingDimmed();
 	void spring();
-	void drawEqual();
-	void drawColorEqual();
+	void raining();
 
 	int springAmps[5];
+	bool* raindrops;
+	int raintime;
+	long raincounter;
 
 public:
 	Balls(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder, int nBars, int nLedsProBar);
