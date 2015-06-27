@@ -23,6 +23,7 @@ Wabern::Wabern(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColo
 	color = 1;
 	type = 0;
 	speed = 100;
+
 	targetCycles = bpm/deltat;
 	pliste = new pixel[nLedsProBar];
 	for(int i = 0; i < nLedsProBar; i++){
@@ -37,6 +38,8 @@ Wabern::~Wabern() {
 }
 
 void Wabern::event(){
+	if(speed == 0)
+		speed = 1;
 	switch(type){
 
 	case 0 :
@@ -112,7 +115,7 @@ void Wabern::Linear(){
 
 		for(int i = 0; i < numLeds; i++){
 			ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i, r, g, b );
-			ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), 1, i, r, g, b );
+			//ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), 1, i, r, g, b );
 		}
 
 	}
@@ -120,7 +123,7 @@ void Wabern::Linear(){
 
 		for(int i = 0; i < numLeds; i++){
 			ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, i, 0, 0, 0 );
-			ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), 1, i, 0, 0, 0 );
+			//ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), 1, i, 0, 0, 0 );
 		}
 	}
 }
@@ -190,4 +193,7 @@ void Wabern::Energy(){
 
 	}
 	drawEqual();
+}
+void Wabern::Haze(){
+
 }

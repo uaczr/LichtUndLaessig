@@ -60,6 +60,11 @@ int Balls::findEmpty(){
 
 void Balls::event(){
 	raincounter++;
+	speed = (uint)(((double)speed/255)*35);
+	if(speed <= 5){
+		speed = 5;
+	}
+	//cout << speed <<endl;
 	switch(type)
 	{
 	case 0:
@@ -84,6 +89,10 @@ void Balls::event(){
 }
 void Balls::noEvent(){
 	raincounter++;
+	speed = (uint)(((double)speed/255)*35);
+	if(speed <= 5){
+		speed = 5;
+	}
 	switch(type)
 	{
 	case 0:
@@ -108,12 +117,13 @@ void Balls::noEvent(){
 }
 
 void Balls::rising(){
+	//cout << speed << endl;
 	if(counter == 0){
 		pliste[0].active = true;
 		pliste[0].color = color;
 	}
 	pixel old, act;
-	if(counter%speed == 0){
+	if(counter%((int)(speed)) == 0){
 		old = pliste[0];
 		pliste[0].active = false;
 		for(int i = 1; i < numLedsProBar; i++){
@@ -132,7 +142,7 @@ void Balls::falling(){
 		pliste[numLedsProBar-1].color = color;
 	}
 	pixel old, act;
-	if(counter%speed == 0){
+	if(counter%((int)(speed)) == 0){
 		old = pliste[numLedsProBar-1];
 
 		pliste[numLedsProBar-1].active = false;
@@ -189,7 +199,7 @@ void Balls::exploding(){
 	}
 
 	pixel old, act;
-	if(counter%speed == 0){
+	if(counter%((int)(speed)) == 0){
 		old = pliste[numLedsProBar/2];
 		pliste[numLedsProBar/2].active = false;
 		for(int i = 1; i < numLedsProBar/2; i++){
@@ -212,7 +222,7 @@ void Balls::explodingDimmed(){
 	}
 
 	pixel old, act;
-	if(counter%speed == 0){
+	if(counter%((int)(speed)) == 0){
 		old = pliste[numLedsProBar/2];
 		pliste[numLedsProBar/2].active = false;
 		for(int i = 1; i < numLedsProBar/2; i++){

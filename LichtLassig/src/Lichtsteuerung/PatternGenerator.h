@@ -46,6 +46,9 @@ typedef struct dmxChannels
 class PatternGenerator {
 	Pattern** pattern1;
 	Pattern** pattern2;
+	Pattern** pattern3;
+	Pattern** pattern4;
+
 	boost::mutex mbeat;
 	boost::mutex mbpm;
 	boost::mutex mpower;
@@ -60,14 +63,21 @@ class PatternGenerator {
 	double power;
 	double deltat;
 	ledscape_pixel_t* colors;
+	ledscape_pixel_t* colors_undimmed;
+	int ptype[10];
+	int pspeed[10];
+	int pcolor[10];
+	bool pactive[10];
+	int ptBeats[10];
 	void setColors();
+	void dimm(double dim);
 public:
 	bool running;
 	PatternGenerator(int num_strips, int num_leds);
 	virtual ~PatternGenerator();
 	static void sigBeat(PatternGenerator *generator, double ibpmTime, double ipower);
 	static void loop(PatternGenerator *generator, boost::asio::deadline_timer* t, int ideltat);
-	void switcher(bool beat);
+	void switcher();
 	void frameBlack();
 	void frameWhite();
 };

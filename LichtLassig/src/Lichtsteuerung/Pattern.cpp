@@ -24,6 +24,7 @@ Pattern::Pattern(ledscape_frame_t* iframe, ledscape_pixel_t* icolors, char* iCol
 	type = 0;
 	speed = 100;
 	targetCycles = bpm/deltat;
+	targetBeats = 0;
 }
 Pattern::Pattern(){
 
@@ -38,7 +39,6 @@ void Pattern::beat(int ideltat, double ibpm, double ipower, int iStrip, int iCol
 	counter = 0;
 	deltat = ideltat;
 	bpm = ibpm;
-
 	targetStrip = iStrip;
 	targetCycles = bpm/deltat;
 	speed = ispeed;
@@ -47,8 +47,11 @@ void Pattern::beat(int ideltat, double ibpm, double ipower, int iStrip, int iCol
 	event();
 
 }
-void Pattern::noBeat(){
+void Pattern::noBeat(int iColor, int ispeed, int itype){
 	counter++;
+	speed = ispeed;
+	type = itype;
+	color = iColor;
 	noEvent();
 }
 

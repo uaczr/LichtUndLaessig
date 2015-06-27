@@ -21,6 +21,7 @@ private:
 	void Switched();
 	void Circle();
 	void Energy();
+	void Haze();
 public:
 	Wabern(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder, int nBars, int nLedsProBar);
 	virtual ~Wabern();

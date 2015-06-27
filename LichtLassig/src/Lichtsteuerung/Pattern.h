@@ -54,6 +54,7 @@ protected:
 	double bpm;
 	int counter;
 	int targetCycles;
+	int targetBeats;
 	int speed;
 	int type;
 	int color;
@@ -73,7 +74,7 @@ public:
 	Pattern(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder, int nBars, int nLedsProBar);
 	virtual ~Pattern();
 	void beat(int ideltat, double ibpm, double ipower, int iStrip, int iColor, int speed, int type);
-	void noBeat();
+	void noBeat(int iColor, int speed, int type);
 };
 
 #endif /* LICHTSTEUERUNG_PATTERN_H_ */

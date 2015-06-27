@@ -18,6 +18,8 @@ private:
 	void tripleShot();
 	void standard();
 	void switched();
+	void switchedBLUEWHITE();
+	void circle();
 
 public:
 	Strobe(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder, int nBars, int nLedsProBar);
