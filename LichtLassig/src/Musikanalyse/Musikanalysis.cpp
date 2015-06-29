@@ -94,7 +94,7 @@ Musikanalysis::Musikanalysis(PatternGenerator* generator) {
 	 analysis2->updControl("Biquad/bandpass/mrs_string/type","bandpass");
 	 analysis2->updControl("Biquad/bandpass/mrs_real/resonance",8.0);
 	 analysis2->updControl("Biquad/bandpass/mrs_real/frequency", 60.0);
-	 analysis2->updControl("ShiftInput/win2/mrs_natural/winSize", 32);
+	 analysis2->updControl("ShiftInput/win2/mrs_natural/winSize", 64);
 
 
 

@@ -13,11 +13,12 @@ class Wabern: public Pattern {
 private:
 	uint8_t count;
 	int top;
-
+	uint genbeatcounter;
 	void event();
 	void noEvent();
 	void Rect();
 	void Linear();
+	void LinearInter();
 	void Switched();
 	void Circle();
 	void Energy();

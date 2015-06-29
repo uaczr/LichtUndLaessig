@@ -22,16 +22,23 @@ class Balls : public Pattern{
 	void event();
 	int findEmpty();
 	void rising();
+	void risingND();
 	void falling();
+	void fallingND();
 	void exploding();
+	void explodingND();
 	void explodingDimmed();
 	void spring();
 	void raining();
-
+	void implodingND();
+	void imploding();
+	void expandimp();
+	int impcount;
 	int springAmps[5];
 	bool* raindrops;
 	int raintime;
 	long raincounter;
+
 
 public:
 	Balls(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder, int nBars, int nLedsProBar);
