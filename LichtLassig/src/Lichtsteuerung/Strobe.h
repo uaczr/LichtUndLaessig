@@ -13,6 +13,8 @@ private:
 	int n;
 	long strobecounter;
 	int switchcounter;
+	int updownpos;
+	bool updown;
 	void event();
 	void noEvent();
 	void tripleShot();
@@ -20,6 +22,15 @@ private:
 	void switched();
 	void switchedBLUEWHITE();
 	void circle();
+	void upanddown();
+	void lowerhalf();
+	void upperhalf();
+
+	void every4();
+	void every8();
+
+
+	void breakdetect();
 
 public:
 	Strobe(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder, int nBars, int nLedsProBar);

@@ -46,6 +46,7 @@ struct pixel{
 };
 class Pattern {
 protected:
+	double dim[3];
 	int targetStrip;
 	int numLeds;
 	int numLedsProBar;
@@ -67,9 +68,12 @@ protected:
 	virtual void noEvent() = 0;
 	double linearApp(double amp1, double amp2, double deltax, double x);
 	double linearAppPM(double amp1, double amp2, double deltax, double x);
+	void drawPixel(int x, int y);
+	void drawBar(int i);
 	void drawEqual();
 	void drawColorEqual();
 	double dmmApp(double amp1, double amp2, double deltax, double x);
+	double quadApp(double amp1, double amp2, double deltax, double x);
 	pixel* pliste;
 public:
 	Pattern();

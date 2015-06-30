@@ -33,6 +33,9 @@ class Balls : public Pattern{
 	void implodingND();
 	void imploding();
 	void expandimp();
+	void sideways();
+	int posx;
+	int posy;
 	int impcount;
 	int springAmps[5];
 	bool* raindrops;

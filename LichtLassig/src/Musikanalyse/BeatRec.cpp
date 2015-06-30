@@ -107,10 +107,10 @@ BeatRec::myProcess(realvec& in, realvec& out)
   double rest;
   counter++;
 
-  if(counter == frontier - 20){
-	  autoset = 0.7;
-	  autoset2 = 0.7;
-	  autoset3 = 0.7;
+  if(counter == frontier - 20){ //20
+	  autoset = 0.6;
+	  autoset2 = 0.6;
+	  autoset3 = 0.6;
   }
   else if(counter == 1){
 	  autoset = 1.8;

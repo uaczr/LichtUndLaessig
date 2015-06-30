@@ -31,6 +31,9 @@ Pattern::Pattern(ledscape_frame_t* iframe, ledscape_pixel_t* icolors,
 		pliste[i].active = false;
 		pliste[i].color = 0;
 	}
+	dim[0] = 1;
+	dim[1] = 1;
+	dim[2] = 1;
 }
 Pattern::Pattern() {
 
@@ -70,23 +73,35 @@ double Pattern::linearApp(double amp1, double amp2, double deltax, double x) {
 	return a;
 }
 
-double Pattern::dmmApp(double amp1, double amp2, double deltax, double x){
-	double amp = amp1-amp2;
+double Pattern::dmmApp(double amp1, double amp2, double deltax, double x) {
+	double amp = amp1 - amp2;
 	double a = 0.3;
 	double b = 0.1;
 	//cout << amp << " "<< a*amp << " " << (double)1/3*deltax << " " << x << endl;
-	if(x < (double)1/3*deltax){
-		return linearApp(amp, a*amp, 1/3*deltax, x);
+	if (x < (double) 1 / 3 * deltax) {
+		return linearApp(amp, a * amp, 1 / 3 * deltax, x);
 	}
-	if(x < (double)2/3*deltax){
-		return linearApp(a * amp, b*amp, 1/3*deltax, x-1/3*deltax);
+	if (x < (double) 2 / 3 * deltax) {
+		return linearApp(a * amp, b * amp, 1 / 3 * deltax, x - 1 / 3 * deltax);
 	}
-	if(x < deltax){
-		return linearApp(b * amp, 0, 1/3*deltax, x-2/3*deltax);
+	if (x < deltax) {
+		return linearApp(b * amp, 0, 1 / 3 * deltax, x - 2 / 3 * deltax);
 	}
 	return 0;
 
 }
+
+double Pattern::quadApp(double amp1, double amp2, double deltax, double x) {
+	if (amp1 > amp2) {
+		//cout << "1 ";
+		return (double) 0.5*((amp1 - amp2) / (deltax * deltax) * deltax * deltax
+				- (double) 2 * (amp1 - amp2) / deltax * x + amp1);
+	} else {
+		//cout << "2 ";
+		return (double) (amp2 - amp1) / (deltax * deltax) * x * x + amp1;
+	}
+}
+
 double Pattern::linearAppPM(double amp1, double amp2, double deltax, double x) {
 	double a = (((amp2 - amp1) / deltax) * x + amp1);
 
@@ -101,8 +116,8 @@ void Pattern::drawEqual() {
 				ledscape_set_color(frame,
 						color_channel_order_from_string(ColorOrder),
 						targetStrip, i * numLedsProBar + j,
-						colors[pliste[j].color].a, colors[pliste[j].color].b,
-						colors[pliste[j].color].c);
+						colors[pliste[j].color].a * dim[0], colors[pliste[j].color].b * dim[1],
+						colors[pliste[j].color].c * dim[2]);
 			}
 		}
 		//cout << endl;
@@ -120,4 +135,26 @@ void Pattern::drawColorEqual() {
 			}
 		}
 	}
+}
+
+void Pattern::drawBar(int i) {
+	for (int j = 0; j < numLedsProBar; j++) {
+
+		if (pliste[j].active == true) {
+			ledscape_set_color(frame,
+					color_channel_order_from_string(ColorOrder), targetStrip,
+					i * numLedsProBar + j, colors[pliste[j].color].a  * dim[0],
+					colors[pliste[j].color].b  * dim[1], colors[pliste[j].color].c * dim[2]);
+		}
+	}
+}
+
+void Pattern::drawPixel(int x, int y) {
+
+			ledscape_set_color(frame,
+					color_channel_order_from_string(ColorOrder), targetStrip,
+					x * numLedsProBar + y, colors[color].a  * dim[0],
+					colors[color].b  * dim[1], colors[color].c * dim[2]);
+
+
 }

@@ -27,6 +27,8 @@ Balls::Balls(ledscape_frame_t* iframe, ledscape_pixel_t* icolors,
 	targetCycles = bpm / deltat;
 	raindrops = new bool[numBars * numLedsProBar];
 	raintime = 0;
+	posx = 0;
+	posy = 0;
 	for (int i = 0; i < numBars * numLedsProBar; i++) {
 		raindrops[i] = false;
 	}
@@ -44,6 +46,9 @@ Balls::Balls(ledscape_frame_t* iframe, ledscape_pixel_t* icolors,
 	power = 1;
 	raincounter = 0;
 	beatcounter = 0;
+	dim[0] = 1;
+	dim[1] = 1;
+	dim[2] = 1;
 }
 
 Balls::~Balls() {
@@ -89,6 +94,9 @@ void Balls::event() {
 	case 6:
 		imploding();
 		break;
+	case 7:
+		sideways();
+		break;
 	}
 }
 void Balls::noEvent() {
@@ -119,40 +127,38 @@ void Balls::noEvent() {
 	case 6:
 		imploding();
 		break;
+	case 7:
+		sideways();
+		break;
 	}
 }
 void Balls::expandimp() {
-	if (beatcounter < 15) {
+	if (beatcounter % 64 < 15) {
 
 		exploding();
 	}
-	if (beatcounter == 15) {
+	if (beatcounter % 64 == 15) {
 		explodingND();
 	}
-	if (beatcounter > 15 && beatcounter < 31) {
+	if (beatcounter % 64 > 15 && beatcounter % 64 < 31) {
 		imploding();
 	}
 	if (beatcounter == 31) {
 
 		implodingND();
 	}
-	if(beatcounter > 31 && beatcounter < 47){
+	if (beatcounter % 64 > 31 && beatcounter % 64 < 47) {
 		falling();
 	}
-	if(beatcounter == 47){
+	if (beatcounter % 64 == 47) {
 		risingND();
 	}
-	if(beatcounter > 47 && beatcounter < 63){
+	if (beatcounter % 64 > 47 && beatcounter % 64 < 63) {
 		rising();
 	}
 
-	if(beatcounter == 63){
+	if (beatcounter == 63) {
 		fallingND();
-	}
-
-	if(beatcounter == 64){
-		beatcounter = 0;
-		exploding();
 	}
 
 }
@@ -484,3 +490,20 @@ void Balls::spring() {
 
 }
 
+void Balls::sideways() {
+	if (counter == 0) {
+		posx = (raincounter * 119) % numBars;
+		for (int j = 0; j < numBars; j++) {
+			for (int i = 0; i < (29*j*beatcounter)%3 +1; i++) {
+				drawPixel(j, ((beatcounter + i+j) * 29) % numLedsProBar);
+			}
+		}
+	} else {
+		for (int j = 0; j < numBars; j++) {
+			for (int i = 0; i < (29*j*beatcounter)%3 +1; i++) {
+				drawPixel(j, ((beatcounter + i+j) * 29) % numLedsProBar);
+			}
+		}
+	}
+
+}

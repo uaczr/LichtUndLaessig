@@ -32,6 +32,9 @@ Wabern::Wabern(ledscape_frame_t* iframe, ledscape_pixel_t* icolors,
 		pliste[i].color = 0;
 	}
 	top = 0;
+	dim[0] = 1;
+	dim[1] = 1;
+	dim[2] = 1;
 }
 
 Wabern::~Wabern() {
@@ -50,7 +53,7 @@ void Wabern::event() {
 		break;
 	case 1:
 		//std::cout << speed*bpm/255 << endl;
-		LinearInter();
+		Dimming();
 		break;
 	case 2:
 		Switched();
@@ -61,6 +64,7 @@ void Wabern::event() {
 	case 4:
 		Energy();
 		break;
+
 
 	}
 	//
@@ -73,7 +77,7 @@ void Wabern::noEvent() {
 		Rect();
 		break;
 	case 1:
-		LinearInter();
+		Dimming();
 		break;
 	case 2:
 		Switched();
@@ -86,6 +90,22 @@ void Wabern::noEvent() {
 		break;
 
 	}
+}
+
+void Wabern::Dimming(){
+	if(beatcounter%128 < 64){
+		dim[0] = quadApp(1, 0.1, 64, beatcounter%128);
+		dim[1] = dim[0];
+		dim[2] = dim[0];
+	}
+	if(beatcounter%128 > 64){
+		dim[0] = quadApp(1, 0.1, 64, (beatcounter % 128) - 64);
+		dim[1] = dim[0];
+		dim[2] = dim[0];
+	}
+	//cout << beatcounter%128<<" " <<dim[0] << endl;
+	Linear();
+
 }
 
 void Wabern::Rect() {
@@ -113,9 +133,9 @@ void Wabern::Rect() {
 void Wabern::Linear() {
 	if (counter * deltat < speed * bpm / 255) {
 		double temp = (1 - counter * deltat / (speed * bpm / 255));
-		int r = (int) ((colors[color].a * temp));
-		int g = (int) ((colors[color].b * temp));
-		int b = (int) ((colors[color].c * temp));
+		int r = (int) ((colors[color].a * temp * dim[0]));
+		int g = (int) ((colors[color].b * temp * dim[1]));
+		int b = (int) ((colors[color].c * temp * dim[2]));
 
 		for (int i = 0; i < numLeds; i++) {
 			ledscape_set_color(frame,
@@ -142,11 +162,11 @@ void Wabern::Switched() {
 		//cout << numBars<<endl;
 	}
 	int r = (int) linearApp((double) colors[color].a, 0, speed * bpm / 255,
-			counter * deltat);
+			counter * deltat) * dim[0];
 	int g = (int) linearApp((double) colors[color].b, 0, speed * bpm / 255,
-			counter * deltat);
+			counter * deltat) * dim[1];
 	int b = (int) linearApp((double) colors[color].c, 0, speed * bpm / 255,
-			counter * deltat);
+			counter * deltat) * dim[2];
 	//cout << r << " " << g << " " << b << endl;
 	if (counter * deltat < speed * bpm / 255) {
 		if (count % 2) {
@@ -178,11 +198,11 @@ void Wabern::Circle() {
 		count++;
 	}
 	int r = (int) linearApp((double) colors[color].a, 0, speed * bpm / 255,
-			counter * deltat);
+			counter * deltat) * dim[0];
 	int g = (int) linearApp((double) colors[color].b, 0, speed * bpm / 255,
-			counter * deltat);
+			counter * deltat) * dim[1];
 	int b = (int) linearApp((double) colors[color].c, 0, speed * bpm / 255,
-			counter * deltat);
+			counter * deltat) * dim[2];
 	if (counter * deltat < speed * bpm / 255) {
 		for (int j = (count % numBars) * numLedsProBar;
 				j < ((count % numBars) + 1) * numLedsProBar; j++) {
@@ -225,7 +245,7 @@ void Wabern::LinearInter() {
 		int r = (int) ((colors[color].a * temp));
 		int g = (int) ((colors[color].b * temp));
 		int b = (int) ((colors[color].c * temp));
-		double dimmstufe = (double)(genbeatcounter % 64)/64*255;
+		double dimmstufe = (double)(genbeatcounter % 64)/64*100;
 		for (int j = 0; j < numBars; j++) {
 			for (int i = 0; i < numLedsProBar; i++) {
 				if (i < numLedsProBar / 2)
