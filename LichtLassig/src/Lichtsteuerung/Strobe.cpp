@@ -43,6 +43,7 @@ Strobe::Strobe(ledscape_frame_t* iframe, ledscape_pixel_t* icolors,
 	dim[0] = 1;
 	dim[1] = 1;
 	dim[2] = 1;
+	generalcounter = 0;
 }
 
 Strobe::~Strobe() {
@@ -133,13 +134,13 @@ void Strobe::noEvent() {
 }
 
 void Strobe::every4() {
-	if (beatcounter%4 == 0 && counter < (double) targetCycles / 4) {
+	if (beatcounter%4 == 0 && counter < (double) targetCycles / 2) {
 		standard();
 	}
 }
 
 void Strobe::every8() {
-	if (beatcounter%8  == 0 && counter < (double) targetCycles / 4) {
+	if (beatcounter%8  == 0 && counter < (double) targetCycles / 2) {
 		standard();
 	}
 

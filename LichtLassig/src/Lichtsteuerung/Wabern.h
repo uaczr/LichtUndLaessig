@@ -14,7 +14,9 @@ private:
 	uint8_t count;
 	int top;
 	uint genbeatcounter;
-
+	double oldheight;
+	double newheight;
+	int beatsSince;
 	void event();
 	void noEvent();
 	void Rect();
@@ -25,6 +27,9 @@ private:
 	void Energy();
 	void Haze();
 	void Dimming();
+	void DimmingAmbi();
+	void Ambilight();
+	void AmbilightNebel();
 public:
 	Wabern(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder, int nBars, int nLedsProBar);
 	virtual ~Wabern();

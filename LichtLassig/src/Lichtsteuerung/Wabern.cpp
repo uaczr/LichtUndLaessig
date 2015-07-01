@@ -25,6 +25,7 @@ Wabern::Wabern(ledscape_frame_t* iframe, ledscape_pixel_t* icolors,
 	type = 0;
 	speed = 100;
 	beatcounter = 0;
+	generalcounter = 0;
 	targetCycles = bpm / deltat;
 	pliste = new pixel[nLedsProBar];
 	for (int i = 0; i < nLedsProBar; i++) {
@@ -35,6 +36,9 @@ Wabern::Wabern(ledscape_frame_t* iframe, ledscape_pixel_t* icolors,
 	dim[0] = 1;
 	dim[1] = 1;
 	dim[2] = 1;
+	oldheight = 0;
+	newheight = 0;
+	beatsSince = 0;
 }
 
 Wabern::~Wabern() {
@@ -64,7 +68,15 @@ void Wabern::event() {
 	case 4:
 		Energy();
 		break;
-
+	case 5:
+		DimmingAmbi();
+		break;
+	case 6:
+		LinearInter();
+		break;
+	case 7:
+		Ambilight();
+		break;
 
 	}
 	//
@@ -88,26 +100,78 @@ void Wabern::noEvent() {
 	case 4:
 		Energy();
 		break;
+	case 5:
+		DimmingAmbi();
+		break;
+	case 6:
+		LinearInter();
+		break;
+	case 7:
+		Ambilight();
+		break;
 
 	}
 }
 
-void Wabern::Dimming(){
-	if(beatcounter%128 < 64){
-		dim[0] = quadApp(1, 0.1, 64, beatcounter%128);
+void Wabern::Dimming() {
+	if (beatcounter % 128 < 64) {
+		dim[0] = quadApp(1, 0.1, 64, beatcounter % 128);
 		dim[1] = dim[0];
 		dim[2] = dim[0];
 	}
-	if(beatcounter%128 > 64){
-		dim[0] = quadApp(1, 0.1, 64, (beatcounter % 128) - 64);
+	if (beatcounter % 128 > 64) {
+		dim[0] = quadApp(0.1, 1, 64, (beatcounter % 128) - 64);
 		dim[1] = dim[0];
 		dim[2] = dim[0];
 	}
-	//cout << beatcounter%128<<" " <<dim[0] << endl;
 	Linear();
 
 }
 
+void Wabern::DimmingAmbi() {
+	if (generalcounter % 5000 < 2500) {
+		dim[0] = quadApp(1, 0.2, 2500, generalcounter % 5000);
+		dim[1] = dim[0];
+		dim[2] = dim[0];
+	}
+	if (generalcounter % 5000 > 2500) {
+		dim[0] = quadApp(0.2, 1, 2500, (generalcounter % 5000) - 2500);
+		dim[1] = dim[0];
+		dim[2] = dim[0];
+	}
+	//cout << dim[0] << endl;
+	AmbilightNebel();
+}
+void Wabern::Ambilight() {
+	for (int i = 0; i < numLedsProBar; i++) {
+		pliste[i].active = true;
+		pliste[i].color = color;
+	}
+	drawEqual();
+}
+
+void Wabern::AmbilightNebel() {
+	if(generalcounter%250 == 0){
+		oldheight = newheight;
+		newheight = ((double)rand()/RAND_MAX * (numLedsProBar-5));
+
+	}
+	double pos = linearApp(oldheight, newheight, 250, generalcounter%250);
+	//cout << pos << endl;
+	for(int i = 0; i < numLedsProBar; i++){
+		pliste[i].active = true;
+		pliste[i].color = color;
+		pliste[i].r = dim[0] * colors[color].a;
+		pliste[i].g = dim[1] * colors[color].b;
+		pliste[i].b = dim[2] * colors[color].c;
+		if(i > pos){
+			pliste[i].r = dim[0] * quadApp( 0,colors[color].a, (double)numLedsProBar-pos, numLedsProBar-i);
+			pliste[i].g = dim[1] * quadApp( 0,colors[color].b, (double)numLedsProBar-pos, numLedsProBar-i);
+			pliste[i].b = dim[2] * quadApp( 0,colors[color].c, (double)numLedsProBar-pos, numLedsProBar-i);
+		}
+	}
+	drawColorEqual();
+}
 void Wabern::Rect() {
 	if (counter == 0) {
 		//std::cout << "FUCK2" << endl;
@@ -220,14 +284,20 @@ void Wabern::Energy() {
 				colors[color].c);
 	}
 	if (counter == 0) {
-		top = power * numLedsProBar / 2;
+		top = power * (numLedsProBar * 3) / 4;
 		if (top >= numLedsProBar)
 			top = numLedsProBar - 1;
+		beatsSince = 0;
+	}
+	if(counter > targetCycles+3 && beatsSince < 3){
+		counter = 0;
+		beatsSince ++;
+		top = 0.7*top;
 	}
 	int acttop = linearApp(top, 0, targetCycles, counter);
 	for (int i = 0; i <= acttop; i++) {
 		pliste[i].active = true;
-		if (i > numLedsProBar / 2) {
+		if (i > (numLedsProBar * 2) / 3) {
 			pliste[i].color = 4;
 		}
 
@@ -245,31 +315,68 @@ void Wabern::LinearInter() {
 		int r = (int) ((colors[color].a * temp));
 		int g = (int) ((colors[color].b * temp));
 		int b = (int) ((colors[color].c * temp));
-		double dimmstufe = (double)(genbeatcounter % 64)/64*100;
-		for (int j = 0; j < numBars; j++) {
-			for (int i = 0; i < numLedsProBar; i++) {
-				if (i < numLedsProBar / 2)
-					ledscape_set_color(frame,
-							color_channel_order_from_string(ColorOrder),
-							targetStrip, i + j * numLedsProBar,
-							(int) linearApp(r, dimmstufe, (double) (numLedsProBar / 2),
-									i),
-							(int) linearApp(g, dimmstufe, (double)  (numLedsProBar / 2),
-									i),
-							(int) linearApp(b, dimmstufe, (double)  (numLedsProBar / 2),
-									i));
-				else
-					ledscape_set_color(frame,
-							color_channel_order_from_string(ColorOrder),
-							targetStrip, i + j * numLedsProBar,
-							(int) linearApp(dimmstufe, r, (double) numLedsProBar / 2,
-									i - numLedsProBar / 2),
-							(int) linearApp(dimmstufe, g, (double) numLedsProBar / 2,
-									i - numLedsProBar / 2),
-							(int) linearApp(dimmstufe, b, (double) numLedsProBar / 2,
-									i - numLedsProBar / 2));
 
-				//ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), 1, i, r, g, b );
+		if (genbeatcounter % 128 < 64) {
+			double dimmstufe = (double) (genbeatcounter % 64) / 64 * 100;
+			for (int j = 0; j < numBars; j++) {
+				for (int i = 0; i < numLedsProBar; i++) {
+					if (i < numLedsProBar / 2)
+						ledscape_set_color(frame,
+								color_channel_order_from_string(ColorOrder),
+								targetStrip, i + j * numLedsProBar,
+								(int) quadApp(r, dimmstufe,
+										(double) (numLedsProBar / 2), i),
+								(int) quadApp(g, dimmstufe,
+										(double) (numLedsProBar / 2), i),
+								(int) quadApp(b, dimmstufe,
+										(double) (numLedsProBar / 2), i));
+					else
+						ledscape_set_color(frame,
+								color_channel_order_from_string(ColorOrder),
+								targetStrip, i + j * numLedsProBar,
+								(int) quadApp(dimmstufe, r,
+										(double) numLedsProBar / 2,
+										i - numLedsProBar / 2),
+								(int) quadApp(dimmstufe, g,
+										(double) numLedsProBar / 2,
+										i - numLedsProBar / 2),
+								(int) quadApp(dimmstufe, b,
+										(double) numLedsProBar / 2,
+										i - numLedsProBar / 2));
+
+					//ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), 1, i, r, g, b );
+				}
+			}
+		} else {
+			double dimmstufe = 100 - (double) (genbeatcounter % 64) / 64 * 100;
+			for (int j = 0; j < numBars; j++) {
+				for (int i = 0; i < numLedsProBar; i++) {
+					if (i < numLedsProBar / 2)
+						ledscape_set_color(frame,
+								color_channel_order_from_string(ColorOrder),
+								targetStrip, i + j * numLedsProBar,
+								(int) quadApp(r, dimmstufe,
+										(double) (numLedsProBar / 2), i),
+								(int) quadApp(g, dimmstufe,
+										(double) (numLedsProBar / 2), i),
+								(int) quadApp(b, dimmstufe,
+										(double) (numLedsProBar / 2), i));
+					else
+						ledscape_set_color(frame,
+								color_channel_order_from_string(ColorOrder),
+								targetStrip, i + j * numLedsProBar,
+								(int) quadApp(dimmstufe, r,
+										(double) numLedsProBar / 2,
+										i - numLedsProBar / 2),
+								(int) quadApp(dimmstufe, g,
+										(double) numLedsProBar / 2,
+										i - numLedsProBar / 2),
+								(int) quadApp(dimmstufe, b,
+										(double) numLedsProBar / 2,
+										i - numLedsProBar / 2));
+
+					//ledscape_set_color(frame, color_channel_order_from_string(ColorOrder), 1, i, r, g, b );
+				}
 			}
 		}
 

@@ -34,6 +34,10 @@ class Balls : public Pattern{
 	void imploding();
 	void expandimp();
 	void sideways();
+	void moon();
+	bool dir;
+	double posmoon;
+	double posmoon1;
 	int posx;
 	int posy;
 	int impcount;

@@ -155,7 +155,7 @@ BeatRec::myProcess(realvec& in, realvec& out)
       out(0,0) = 1;
       sig(generator, buffer(1,0), std::abs(in(0,0)/buffer(0,0)));
       MRSERR("Beatpower (%): " << (std::abs(in(0,0)/buffer(0,0)) * 100) << "\tBeatdistindtiveness (%): " << (std::abs(in(2,0)/buffer(2,0)) * 100) << "\tBeatslope (%): "<< (std::abs(in(3,0)/buffer(3,0))*100) << "\tEstimate BPM: "<< std::abs(1/buffer(1,0)*60000) << "\tBeatTimeDistance (ms): " << ms.count());
-      if(counter > 20){
+      if(ms.count() > 400){
 
     	  buffer(0,0) = 40*buffer(0,0)/50 + 10*in(0,0)/50;
 

@@ -29,6 +29,8 @@ Balls::Balls(ledscape_frame_t* iframe, ledscape_pixel_t* icolors,
 	raintime = 0;
 	posx = 0;
 	posy = 0;
+	dir = true;
+	generalcounter = 0;
 	for (int i = 0; i < numBars * numLedsProBar; i++) {
 		raindrops[i] = false;
 	}
@@ -49,6 +51,8 @@ Balls::Balls(ledscape_frame_t* iframe, ledscape_pixel_t* icolors,
 	dim[0] = 1;
 	dim[1] = 1;
 	dim[2] = 1;
+	posmoon = 2;
+	posmoon1 = 3;
 }
 
 Balls::~Balls() {
@@ -97,6 +101,9 @@ void Balls::event() {
 	case 7:
 		sideways();
 		break;
+	case 8:
+		moon();
+		break;
 	}
 }
 void Balls::noEvent() {
@@ -130,6 +137,9 @@ void Balls::noEvent() {
 	case 7:
 		sideways();
 		break;
+	case 8:
+		moon();
+		break;
 	}
 }
 void Balls::expandimp() {
@@ -151,14 +161,17 @@ void Balls::expandimp() {
 		falling();
 	}
 	if (beatcounter % 64 == 47) {
-		risingND();
+		fallingND();
 	}
 	if (beatcounter % 64 > 47 && beatcounter % 64 < 63) {
 		rising();
 	}
 
 	if (beatcounter == 63) {
-		fallingND();
+		risingND();
+	}
+	if(counter > targetCycles && counter%targetCycles == 10){
+		beatcounter++;
 	}
 
 }
@@ -494,16 +507,95 @@ void Balls::sideways() {
 	if (counter == 0) {
 		posx = (raincounter * 119) % numBars;
 		for (int j = 0; j < numBars; j++) {
-			for (int i = 0; i < (29*j*beatcounter)%3 +1; i++) {
-				drawPixel(j, ((beatcounter + i+j) * 29) % numLedsProBar);
+			for (int i = 0; i < (29 * j * beatcounter) % 3; i++) {
+				drawPixel(j, ((beatcounter + i + j) * 29) % numLedsProBar);
 			}
 		}
 	} else {
 		for (int j = 0; j < numBars; j++) {
-			for (int i = 0; i < (29*j*beatcounter)%3 +1; i++) {
-				drawPixel(j, ((beatcounter + i+j) * 29) % numLedsProBar);
+			for (int i = 0; i < (29 * j * beatcounter) % 3; i++) {
+				drawPixel(j, ((beatcounter + i + j) * 29) % numLedsProBar);
 			}
 		}
 	}
 
+}
+
+void Balls::moon() {
+	if (counter == 0) {
+		if (dir) {
+			dir = false;
+		} else {
+			dir = true;
+		}
+		posmoon = posmoon1;
+	}
+
+	if (counter > targetCycles) {
+		drawColorEqual();
+	} else {
+		if (dir) {
+			for (int i = 0; i < numLedsProBar; i++) {
+				pliste[i].active = false;
+			}
+			posmoon1 = linearApp(posmoon, numLedsProBar - 4, targetCycles,
+					counter);
+			pixel colorpix;
+			//cout << (int) colorpix.r << " " << (int) colorpix.g << " " << (int) colorpix.b << " "<< " " <<(int) posmoon1 + 3 << endl;
+			getPixelColor(1, (int) posmoon1 + 3, &colorpix);
+
+			for (int i = posmoon1 + 1; i <= posmoon1 + 3; i++) {
+				pliste[i].active = true;
+				pliste[i].color = color;
+				pliste[i].r = quadApp(colorpix.r, (double) 0.3 * colorpix.r, 3,
+						i - (posmoon1 - 2));
+				pliste[i].g = quadApp(colorpix.g, (double) 0.3 * colorpix.g, 3,
+						i - (posmoon1 - 2));
+				pliste[i].b = quadApp(colorpix.b, (double) 0.3 * colorpix.b, 3,
+						i - (posmoon1 - 2));
+			}
+			getPixelColor(1, (int) posmoon1 - 2, &colorpix);
+			for (int i = posmoon1 - 2; i <= posmoon1; i++) {
+				pliste[i].active = true;
+				pliste[i].color = color;
+				pliste[i].r = quadApp((double) 0.3 * colorpix.r, colorpix.r, 3,
+						i - (posmoon1));
+				pliste[i].g = quadApp((double) 0.3 * colorpix.g, colorpix.g, 3,
+						i - (posmoon1));
+				pliste[i].b = quadApp((double) 0.3 * colorpix.b, colorpix.b, 3,
+						i - (posmoon1));
+			}
+		} else {
+			for (int i = 0; i < numLedsProBar; i++) {
+				pliste[i].active = false;
+			}
+			posmoon1 = linearApp(posmoon, 2, targetCycles, counter);
+			pixel colorpix;
+			//cout << (int) colorpix.r << " " << (int) colorpix.g << " " << (int) colorpix.b << " " <<(int) posmoon1 + 3 << endl;
+			getPixelColor(1, (int) posmoon1 + 3, &colorpix);
+
+			for (int i = posmoon1 + 1; i <= posmoon1 + 3; i++) {
+				pliste[i].active = true;
+				pliste[i].color = color;
+				pliste[i].r = quadApp(colorpix.r, (double) 0.3 * colorpix.r, 3,
+						i - (posmoon1 - 2));
+				pliste[i].g = quadApp(colorpix.g, (double) 0.3 * colorpix.g, 3,
+						i - (posmoon1 - 2));
+				pliste[i].b = quadApp(colorpix.b, (double) 0.3 * colorpix.b, 3,
+						i - (posmoon1 - 2));
+			}
+			getPixelColor(1, (int) posmoon1 - 2, &colorpix);
+			for (int i = posmoon1 - 2; i <= posmoon1; i++) {
+				pliste[i].active = true;
+				pliste[i].color = color;
+				pliste[i].r = quadApp((double) 0.3 * colorpix.r, colorpix.r, 3,
+						i - (posmoon1));
+				pliste[i].g = quadApp((double) 0.3 * colorpix.g, colorpix.g, 3,
+						i - (posmoon1));
+				pliste[i].b = quadApp((double) 0.3 * colorpix.b, colorpix.b, 3,
+						i - (posmoon1));
+			}
+		}
+		drawColorEqual();
+	}
 }

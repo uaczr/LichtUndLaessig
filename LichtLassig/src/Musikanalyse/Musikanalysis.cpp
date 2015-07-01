@@ -86,14 +86,15 @@ Musikanalysis::Musikanalysis(PatternGenerator* generator) {
 	 analysis2->addMarSystem(mng.create("Gain", "gain"));
 	 analysis2->addMarSystem(mng.create("FullWaveRectifier", "rectifier"));
 	 analysis2->addMarSystem(mng.create("ShiftInput", "win2"));
+	 //analysis2->addMarSystem(mng.create("Square", "square"));
 	 analysis2->addMarSystem(mng.create("AbsMax", "max"));
 	 analysis2->addMarSystem(mng.create("BeatStat", "beatstat"));
 	 analysis2->addMarSystem(mng.create("Beat", "Beat"));
 	 //analysis2->addMarSystem(mng.create("FlowThru", "thru"));
 	 analysis2->updControl("Gain/gain/mrs_real/gain",3.0);
 	 analysis2->updControl("Biquad/bandpass/mrs_string/type","bandpass");
-	 analysis2->updControl("Biquad/bandpass/mrs_real/resonance",8.0);
-	 analysis2->updControl("Biquad/bandpass/mrs_real/frequency", 60.0);
+	 analysis2->updControl("Biquad/bandpass/mrs_real/resonance",4.0);
+	 analysis2->updControl("Biquad/bandpass/mrs_real/frequency", 63.0);
 	 analysis2->updControl("ShiftInput/win2/mrs_natural/winSize", 64);
 
 
@@ -104,7 +105,7 @@ Musikanalysis::Musikanalysis(PatternGenerator* generator) {
 	 topnet->addMarSystem(analysis2);
 	 BeatRec *mar = dynamic_cast<BeatRec*>(analysis2->getChildMarSystem("Beat/Beat"));
 	 mar->initSignal(generator);
-	 topnet->updControl("AudioSourceBlocking/audioIn/mrs_natural/bufferSize", 16);
+	 topnet->updControl("AudioSourceBlocking/audioIn/mrs_natural/bufferSize", 64);
 	 topnet->updControl("mrs_natural/inSamples", 64);
 	 topnet->update();
 	 std::cout << topnet->getctrl("AudioSourceBlocking/audioIn/mrs_natural/onSamples") << std::endl;

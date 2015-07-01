@@ -57,6 +57,7 @@ protected:
 	int targetCycles;
 	int targetBeats;
 	uint beatcounter;
+	uint generalcounter;
 	int speed;
 	int type;
 	int color;
@@ -70,8 +71,10 @@ protected:
 	double linearAppPM(double amp1, double amp2, double deltax, double x);
 	void drawPixel(int x, int y);
 	void drawBar(int i);
+	void drawBarColor(int i);
 	void drawEqual();
 	void drawColorEqual();
+	void getPixelColor(int istrip, int ipixel, pixel* ipix);
 	double dmmApp(double amp1, double amp2, double deltax, double x);
 	double quadApp(double amp1, double amp2, double deltax, double x);
 	pixel* pliste;

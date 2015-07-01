@@ -17,10 +17,17 @@ PatternGenerator::PatternGenerator(int num_strips, int num_leds) {
 	running = false;
 	leds = ledscape_init_dmx(nleds);
 	frame = ledscape_frame(leds, 0);
+	preframe = new ledscape_frame_t[108];
 	DMXInfo = (dmxChannels_t*) leds->pru1->data_ram;
 	inDMX = (uint8_t*) leds->pru1->data_ram;
 	inDMX += 40;
-
+	for (int i = 0; i < 108; i++) {
+		for (int j = 0; j < 8; j++) {
+			preframe[i].strip[j].a = 0;
+			preframe[i].strip[j].b = 0;
+			preframe[i].strip[j].c = 0;
+		}
+	}
 	bpmTime = 500;
 
 	colors = new ledscape_pixel_t[20];
@@ -29,30 +36,42 @@ PatternGenerator::PatternGenerator(int num_strips, int num_leds) {
 	pattern2 = new Pattern*[10];
 	pattern3 = new Pattern*[10];
 	pattern4 = new Pattern*[10];
-	pattern1[0] = static_cast<Pattern*>(new Wabern(frame, colors, "GRB", BARNUM,
-	LEDSPBARNUM));
-	pattern1[1] = static_cast<Pattern*>(new Balls(frame, colors, "GRB", BARNUM,
-	LEDSPBARNUM));
-	pattern1[2] = static_cast<Pattern*>(new Strobe(frame, colors, "GRB", BARNUM,
-	LEDSPBARNUM));
-	pattern2[0] = static_cast<Pattern*>(new Wabern(frame, colors, "GRB", BARNUM,
-	LEDSPBARNUM));
-	pattern2[1] = static_cast<Pattern*>(new Balls(frame, colors, "GRB", BARNUM,
-	LEDSPBARNUM));
-	pattern2[2] = static_cast<Pattern*>(new Strobe(frame, colors, "GRB", BARNUM,
-	LEDSPBARNUM));
-	pattern3[0] = static_cast<Pattern*>(new Wabern(frame, colors, "GRB", BARNUM,
-	LEDSPBARNUM));
-	pattern3[1] = static_cast<Pattern*>(new Balls(frame, colors, "GRB", BARNUM,
-	LEDSPBARNUM));
-	pattern3[2] = static_cast<Pattern*>(new Strobe(frame, colors, "GRB", BARNUM,
-	LEDSPBARNUM));
-	pattern4[0] = static_cast<Pattern*>(new Wabern(frame, colors, "GRB", BARNUM,
-	LEDSPBARNUM));
-	pattern4[1] = static_cast<Pattern*>(new Balls(frame, colors, "GRB", BARNUM,
-	LEDSPBARNUM));
-	pattern4[2] = static_cast<Pattern*>(new Strobe(frame, colors, "GRB", BARNUM,
-	LEDSPBARNUM));
+	pattern1[0] = static_cast<Pattern*>(new Wabern(preframe, colors, "GRB",
+			BARNUM,
+			LEDSPBARNUM));
+	pattern1[1] = static_cast<Pattern*>(new Balls(preframe, colors, "GRB",
+			BARNUM,
+			LEDSPBARNUM));
+	pattern1[2] = static_cast<Pattern*>(new Strobe(preframe, colors, "GRB",
+			BARNUM,
+			LEDSPBARNUM));
+	pattern2[0] = static_cast<Pattern*>(new Wabern(preframe, colors, "GRB",
+			BARNUM,
+			LEDSPBARNUM));
+	pattern2[1] = static_cast<Pattern*>(new Balls(preframe, colors, "GRB",
+			BARNUM,
+			LEDSPBARNUM));
+	pattern2[2] = static_cast<Pattern*>(new Strobe(preframe, colors, "GRB",
+			BARNUM,
+			LEDSPBARNUM));
+	pattern3[0] = static_cast<Pattern*>(new Wabern(preframe, colors, "GRB",
+			BARNUM,
+			LEDSPBARNUM));
+	pattern3[1] = static_cast<Pattern*>(new Balls(preframe, colors, "GRB",
+			BARNUM,
+			LEDSPBARNUM));
+	pattern3[2] = static_cast<Pattern*>(new Strobe(preframe, colors, "GRB",
+			BARNUM,
+			LEDSPBARNUM));
+	pattern4[0] = static_cast<Pattern*>(new Wabern(preframe, colors, "GRB",
+			BARNUM,
+			LEDSPBARNUM));
+	pattern4[1] = static_cast<Pattern*>(new Balls(preframe, colors, "GRB",
+			BARNUM,
+			LEDSPBARNUM));
+	pattern4[2] = static_cast<Pattern*>(new Strobe(preframe, colors, "GRB",
+			BARNUM,
+			LEDSPBARNUM));
 
 	setColors();
 }
@@ -112,6 +131,13 @@ void PatternGenerator::loop(PatternGenerator *generator,
 	 }*/
 	//cout << "new" << endl;
 	ledscape_wait(generator->leds);
+	for (int i = 0; i < 108; i++) {
+		for (int j = 0; j < 8; j++) {
+			generator->frame[i].strip[j].a = generator->preframe[i].strip[j].a;
+			generator->frame[i].strip[j].b = generator->preframe[i].strip[j].b;
+			generator->frame[i].strip[j].c = generator->preframe[i].strip[j].c;
+		}
+	}
 	ledscape_draw(generator->leds, 0);
 	generator->mbeat.lock();
 	generator->beat = false;
@@ -132,9 +158,9 @@ void PatternGenerator::loop(PatternGenerator *generator,
 
 void PatternGenerator::frameBlack() {
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 6; i++) {
 		for (int j = 0; j < nleds; j++) {
-			ledscape_set_color(frame, COLOR_ORDER_BRG, i, j, 0, 0, 0);
+			ledscape_set_color(preframe, COLOR_ORDER_BRG, i, j, 0, 0, 0);
 		}
 	}
 
@@ -174,10 +200,10 @@ void PatternGenerator::setColors() {
 	colors[4].b = 0;
 	colors[4].c = 0;
 
-	///red
+	///yellow
 	colors[5].a = 255;
-	colors[5].b = 0;
-	colors[5].c = 120;
+	colors[5].b = 30;
+	colors[5].c = 0;
 
 	///white
 	colors_undimmed[0].a = 255;
@@ -206,17 +232,30 @@ void PatternGenerator::setColors() {
 
 	///red
 	colors_undimmed[5].a = 255;
-	colors_undimmed[5].b = 0;
-	colors_undimmed[5].c = 120;
+	colors_undimmed[5].b = 30;
+	colors_undimmed[5].c = 0;
 }
 void PatternGenerator::dimm(double dim) {
 	for (int i = 0; i < 20; i++) {
-		colors[i].a = (uint8_t) colors_undimmed[i].a * dim;
-		colors[i].b = (uint8_t) colors_undimmed[i].b * dim;
-		colors[i].c = (uint8_t) colors_undimmed[i].c * dim;
+		colors[i].a = (uint8_t) quadApp(0, colors_undimmed[i].a, 255, dim);
+		colors[i].b = (uint8_t) quadApp(0, colors_undimmed[i].b, 255, dim);
+		colors[i].c = (uint8_t) quadApp(0, colors_undimmed[i].c, 255, dim);
 
 	}
 }
+
+double PatternGenerator::quadApp(double amp1, double amp2, double deltax,
+		double x) {
+	if (amp1 > amp2) {
+		//cout << "1 ";
+		return (double) (amp1 - amp2) / (deltax * deltax) * x * x
+				- (double) 2 * (amp1 - amp2) / (deltax) * x + amp1;
+	} else {
+		//cout << "2 ";
+		return (double) (amp2 - amp1) / (deltax * deltax) * x * x + amp1;
+	}
+}
+
 void PatternGenerator::switcher() {
 	/*
 	 * DMX 1.Kanal: Patternkombi
@@ -226,7 +265,7 @@ void PatternGenerator::switcher() {
 	 */
 
 	//cout << (uint8_t) inDMX[1] / 255 * 6 << endl;
-	dimm(double(inDMX[4]) / 255);
+	dimm(double(inDMX[4]));
 	if (inDMX[6] <= 4) {
 		//cout << (uint8_t) ((double) inDMX[1] / 255 * 6) <<endl;
 		switch ((uint8_t) ((double) inDMX[1] / 255 * 6)) ///Patternkombi
@@ -239,7 +278,7 @@ void PatternGenerator::switcher() {
 				pactive[1] = true;
 				pcolor[1] = 2; //0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
 				pspeed[1] = inDMX[3];
-				ptype[1] = 1; //0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
+				ptype[1] = 6; //0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
 				///Pattern1-Ebene1 -- Balls
 				pactive[2] = false;
 				pcolor[2] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
@@ -278,7 +317,7 @@ void PatternGenerator::switcher() {
 				pactive[2] = true;
 				pcolor[2] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
 				pspeed[2] = inDMX[3];
-				ptype[2] = 7;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
+				ptype[2] = 2;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
 				///Pattern1-Ebene2 -- Strobe
 				pactive[3] = false;
 				pcolor[3] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
@@ -426,7 +465,7 @@ void PatternGenerator::switcher() {
 				pspeed[3] = inDMX[3];
 				ptype[3] = 1;				//0 Triple	1 Standard	3 Switched
 				///Pattern2-Ebene0 -- Wabern
-				pactive[4] = true;
+				pactive[4] = false;
 				pcolor[4] = 2;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
 				pspeed[4] = inDMX[3];
 				ptype[4] = 4;//0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
@@ -445,7 +484,41 @@ void PatternGenerator::switcher() {
 			if (inDMX[2] > (int) (1 * 255 / 5)
 					&& inDMX[2] < (int) (2 * 255 / 5)) {
 				///Pattern1-Ebene0 -- Wabern
-				pactive[1] = false;
+				pactive[1] = true;
+				pcolor[1] = 2;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[1] = inDMX[3];
+				ptype[1] = 1;//0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
+				///Pattern1-Ebene1 -- Balls
+				pactive[2] = true;
+				pcolor[2] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[2] = inDMX[3];
+				ptype[2] = 4;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
+				///Pattern1-Ebene2 -- Strobe
+				pactive[3] = false;
+				pcolor[3] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[3] = inDMX[3];
+				ptype[3] = 1;				//0 Triple	1 Standard	3 Switched
+				///Pattern2-Ebene0 -- Wabern
+				pactive[4] = false;
+				pcolor[4] = 2;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[4] = inDMX[3];
+				ptype[4] = 1;//0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
+				///Pattern1-Ebene1 -- Balls
+				pactive[5] = false;
+				pcolor[5] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[5] = inDMX[3];
+				ptype[5] = 4;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
+				///Pattern1-Ebene2 -- Strobe
+				pactive[6] = false;
+				pcolor[6] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[6] = inDMX[3];
+				ptype[6] = 1;				//0 Triple	1 Standard	3 Switched
+
+			}
+			if (inDMX[2] > (int) (2 * 255 / 5)
+					&& inDMX[2] < (int) (3 * 255 / 5)) {
+				///Pattern1-Ebene0 -- Wabern
+				pactive[1] = true;
 				pcolor[1] = 2;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
 				pspeed[1] = inDMX[3];
 				ptype[1] = 1;//0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
@@ -469,40 +542,6 @@ void PatternGenerator::switcher() {
 				pcolor[5] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
 				pspeed[5] = inDMX[3];
 				ptype[5] = 4;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
-				///Pattern1-Ebene2 -- Strobe
-				pactive[6] = false;
-				pcolor[6] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
-				pspeed[6] = inDMX[3];
-				ptype[6] = 1;				//0 Triple	1 Standard	3 Switched
-
-			}
-			if (inDMX[2] > (int) (2 * 255 / 5)
-					&& inDMX[2] < (int) (3 * 255 / 5)) {
-				///Pattern1-Ebene0 -- Wabern
-				pactive[1] = true;
-				pcolor[1] = 2;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
-				pspeed[1] = inDMX[3];
-				ptype[1] = 1;//0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
-				///Pattern1-Ebene1 -- Balls
-				pactive[2] = true;
-				pcolor[2] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
-				pspeed[2] = inDMX[3];
-				ptype[2] = 2;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
-				///Pattern1-Ebene2 -- Strobe
-				pactive[3] = false;
-				pcolor[3] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
-				pspeed[3] = inDMX[3];
-				ptype[3] = 1;				//0 Triple	1 Standard	3 Switched
-				///Pattern2-Ebene0 -- Wabern
-				pactive[4] = true;
-				pcolor[4] = 2;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
-				pspeed[4] = inDMX[3];
-				ptype[4] = 1;//0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
-				///Pattern1-Ebene1 -- Balls
-				pactive[5] = true;
-				pcolor[5] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
-				pspeed[5] = inDMX[3];
-				ptype[5] = 2;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
 				///Pattern1-Ebene2 -- Strobe
 				pactive[6] = false;
 				pcolor[6] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
@@ -755,6 +794,181 @@ void PatternGenerator::switcher() {
 			}
 			break;
 		}
+		case 3: {
+
+			if (inDMX[2] < (int) (1 * 255 / 5)) ///Patternsuperpos
+					{
+				///Pattern1-Ebene0 -- Wabern
+				pactive[1] = true;
+				pcolor[1] = 4; //0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[1] = inDMX[3];
+				ptype[1] = 5; //0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
+				///Pattern1-Ebene1 -- Balls
+				pactive[2] = false;
+				pcolor[2] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[2] = inDMX[3];
+				ptype[2] = 1;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
+				///Pattern1-Ebene2 -- Strobe
+				pactive[3] = false;
+				pcolor[3] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[3] = inDMX[3];
+				ptype[3] = 1;				//0 Triple	1 Standard	3 Switched
+				///Pattern2-Ebene0 -- Wabern
+				pactive[4] = false;
+				pcolor[4] = 2;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[4] = inDMX[3];
+				ptype[4] = 2;//0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
+				///Pattern1-Ebene1 -- Balls
+				pactive[5] = false;
+				pcolor[5] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[5] = inDMX[3];
+				ptype[5] = 2;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
+				///Pattern1-Ebene2 -- Strobe
+				pactive[6] = false;
+				pcolor[6] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[6] = inDMX[3];
+				ptype[6] = 1;				//0 Triple	1 Standard	3 Switched
+
+			}
+			if (inDMX[2] > (int) (1 * 255 / 5)
+					&& inDMX[2] < (int) (2 * 255 / 5)) {
+				///Pattern1-Ebene0 -- Wabern
+				pactive[1] = true;
+				pcolor[1] = 4;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[1] = inDMX[3];
+				ptype[1] = 7;//0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
+				///Pattern1-Ebene1 -- Balls
+				pactive[2] = true;
+				pcolor[2] = 5;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[2] = inDMX[3];
+				ptype[2] = 8;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
+				///Pattern1-Ebene2 -- Strobe
+				pactive[3] = false;
+				pcolor[3] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[3] = inDMX[3];
+				ptype[3] = 1;				//0 Triple	1 Standard	3 Switched
+				///Pattern2-Ebene0 -- Wabern
+				pactive[4] = false;
+				pcolor[4] = 2;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[4] = inDMX[3];
+				ptype[4] = 3;//0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
+				///Pattern1-Ebene1 -- Balls
+				pactive[5] = false;
+				pcolor[5] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[5] = inDMX[3];
+				ptype[5] = 4;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
+				///Pattern1-Ebene2 -- Strobe
+				pactive[6] = false;
+				pcolor[6] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[6] = inDMX[3];
+				ptype[6] = 1;				//0 Triple	1 Standard	3 Switched
+
+			}
+			if (inDMX[2] > (int) (2 * 255 / 5)
+					&& inDMX[2] < (int) (3 * 255 / 5)) {
+				///Pattern1-Ebene0 -- Wabern
+				pactive[1] = false;
+				pcolor[1] = 2;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[1] = inDMX[3];
+				ptype[1] = 1;//0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
+				///Pattern1-Ebene1 -- Balls
+				pactive[2] = false;
+				pcolor[2] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[2] = inDMX[3];
+				ptype[2] = 3;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
+				///Pattern1-Ebene2 -- Strobe
+				pactive[3] = true;
+				pcolor[3] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[3] = inDMX[3];
+				ptype[3] = 2;				//0 Triple	1 Standard	3 Switched
+				///Pattern2-Ebene0 -- Wabern
+				pactive[4] = false;
+				pcolor[4] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[4] = inDMX[3];
+				ptype[4] = 1;//0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
+				///Pattern1-Ebene1 -- Balls
+				pactive[5] = false;
+				pcolor[5] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[5] = inDMX[3];
+				ptype[5] = 5;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
+				///Pattern1-Ebene2 -- Strobe
+				pactive[6] = true;
+				pcolor[6] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[6] = inDMX[3];
+				ptype[6] = 2;				//0 Triple	1 Standard	3 Switched
+
+			}
+			if (inDMX[2] > (int) (3 * 255 / 5)
+					&& inDMX[2] < (int) (4 * 255 / 5)) {
+				///Pattern1-Ebene0 -- Wabern
+				pactive[1] = false;
+				pcolor[1] = 2;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[1] = inDMX[3];
+				ptype[1] = 1;//0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
+				///Pattern1-Ebene1 -- Balls
+				pactive[2] = false;
+				pcolor[2] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[2] = inDMX[3];
+				ptype[2] = 1;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
+				///Pattern1-Ebene2 -- Strobe
+				pactive[3] = true;
+				pcolor[3] = 2;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[3] = inDMX[3];
+				ptype[3] = 3;				//0 Triple	1 Standard	3 Switched
+				///Pattern2-Ebene0 -- Wabern
+				pactive[4] = false;
+				pcolor[4] = 2;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[4] = inDMX[3];
+				ptype[4] = 1;//0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
+				///Pattern1-Ebene1 -- Balls
+				pactive[5] = false;
+				pcolor[5] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[5] = inDMX[3];
+				ptype[5] = 2;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
+				///Pattern1-Ebene2 -- Strobe
+				pactive[6] = true;
+				pcolor[6] = 2;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[6] = inDMX[3];
+				ptype[6] = 3;				//0 Triple	1 Standard	3 Switched
+
+			}
+			if (inDMX[2] > (int) (4 * 255 / 5)
+					&& inDMX[2] <= (int) (5 * 255 / 5)) {
+				///Pattern1-Ebene0 -- Wabern
+				pactive[1] = false;
+				pcolor[1] = 2;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[1] = inDMX[3];
+				ptype[1] = 1;//0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
+				///Pattern1-Ebene1 -- Balls
+				pactive[2] = false;
+				pcolor[2] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[2] = inDMX[3];
+				ptype[2] = 1;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
+				///Pattern1-Ebene2 -- Strobe
+				pactive[3] = true;
+				pcolor[3] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[3] = inDMX[3];
+				ptype[3] = 4;				//0 Triple	1 Standard	3 Switched
+				///Pattern2-Ebene0 -- Wabern
+				pactive[4] = false;
+				pcolor[4] = 2;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[4] = inDMX[3];
+				ptype[4] = 1;//0 Rect	1 Linear	2 Switched	3 Circle 	4 Equalizer
+				///Pattern1-Ebene1 -- Balls
+				pactive[5] = false;
+				pcolor[5] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[5] = inDMX[3];
+				ptype[5] = 2;//0 Rising	1 Falling	2 Exploding	3 ExpDim	4 Spring	5 Raining
+				///Pattern1-Ebene2 -- Strobe
+				pactive[6] = true;
+				pcolor[6] = 0;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
+				pspeed[6] = inDMX[3];
+				ptype[6] = 4;				//0 Triple	1 Standard	3 Switched
+
+			}
+			break;
+		}
+
 		}
 
 	} else {
@@ -856,7 +1070,7 @@ void PatternGenerator::switcher() {
 			///Pattern1-Ebene2 -- Strobe
 			pactive[6] = true;
 			pcolor[6] = 4;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
-			pspeed[6] = inDMX[6];
+			pspeed[6] = (uint8_t) ((double) inDMX[6] * 0.9);
 			ptype[6] = 1;				//0 Triple	1 Standard	3 Switched
 
 		}
@@ -890,7 +1104,7 @@ void PatternGenerator::switcher() {
 			///Pattern1-Ebene2 -- Strobe
 			pactive[6] = true;
 			pcolor[6] = 2;//0 Weiß 	1 Schwarz 	2 Blau		3 Grün		4 Rot
-			pspeed[6] = inDMX[6];
+			pspeed[6] = (uint8_t) ((double) inDMX[6] * 0.9);
 			ptype[6] = 7;				//0 Triple	1 Standard	3 Switched
 
 		}
@@ -966,11 +1180,11 @@ void PatternGenerator::switcher() {
 	}
 
 	if (beat) {
-		cout << "DMX Channels \t";
-		for (int j = 1; j < 7; j++) {
-			cout << (int) inDMX[j] << "\t";
-		}
-		cout << endl;
+		/*cout << "DMX Channels \t";
+		 for (int j = 1; j < 7; j++) {
+		 cout << (int) inDMX[j] << "\t";
+		 }
+		 cout << endl;*/
 
 		if (pactive[1]) {
 			pattern1[0]->beat(deltat, bpmTime, power, 0, pcolor[1], pspeed[1],

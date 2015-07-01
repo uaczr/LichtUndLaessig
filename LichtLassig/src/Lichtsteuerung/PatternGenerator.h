@@ -48,7 +48,7 @@ class PatternGenerator {
 	Pattern** pattern2;
 	Pattern** pattern3;
 	Pattern** pattern4;
-
+	double quadApp(double amp1, double amp2, double deltax, double x);
 	boost::mutex mbeat;
 	boost::mutex mbpm;
 	boost::mutex mpower;
@@ -57,6 +57,7 @@ class PatternGenerator {
 	dmxChannels_t* DMXInfo;
 	uint8_t* inDMX;
 	ledscape_frame_t* frame;
+	ledscape_frame_t* preframe;
 	int nstrips;
 	int nleds;
 	double bpmTime;

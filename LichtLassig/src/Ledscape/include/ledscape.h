@@ -98,6 +98,12 @@ extern inline void ledscape_set_color(
 	uint8_t g,
 	uint8_t b
 );
+extern inline void ledscape_get_color(ledscape_frame_t* frame,color_channel_order_t color_channel_order,
+	uint8_t strip,
+	uint16_t pixel,
+	uint8_t* r,
+	uint8_t* g,
+	uint8_t* b);
 
 extern inline void ledscape_pixel_set_color(
 	ledscape_pixel_t * const out_pixel,

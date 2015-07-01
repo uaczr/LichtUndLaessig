@@ -34,6 +34,7 @@ Pattern::Pattern(ledscape_frame_t* iframe, ledscape_pixel_t* icolors,
 	dim[0] = 1;
 	dim[1] = 1;
 	dim[2] = 1;
+	generalcounter = 0;
 }
 Pattern::Pattern() {
 
@@ -54,6 +55,7 @@ void Pattern::beat(int ideltat, double ibpm, double ipower, int iStrip,
 	speed = ispeed;
 	type = itype;
 	power = ipower;
+	generalcounter++;
 	event();
 
 }
@@ -62,6 +64,7 @@ void Pattern::noBeat(int iColor, int ispeed, int itype) {
 	speed = ispeed;
 	type = itype;
 	color = iColor;
+	generalcounter++;
 	noEvent();
 }
 
@@ -94,8 +97,8 @@ double Pattern::dmmApp(double amp1, double amp2, double deltax, double x) {
 double Pattern::quadApp(double amp1, double amp2, double deltax, double x) {
 	if (amp1 > amp2) {
 		//cout << "1 ";
-		return (double) 0.5*((amp1 - amp2) / (deltax * deltax) * deltax * deltax
-				- (double) 2 * (amp1 - amp2) / deltax * x + amp1);
+		return (double) (amp1 - amp2) / (deltax * deltax) * x * x
+				- (double) 2*(amp1 - amp2) / (deltax) * x + amp1;
 	} else {
 		//cout << "2 ";
 		return (double) (amp2 - amp1) / (deltax * deltax) * x * x + amp1;
@@ -149,6 +152,18 @@ void Pattern::drawBar(int i) {
 	}
 }
 
+void Pattern::drawBarColor(int i) {
+	for (int j = 0; j < numLedsProBar; j++) {
+
+		if (pliste[j].active == true) {
+			ledscape_set_color(frame,
+					color_channel_order_from_string(ColorOrder), targetStrip,
+					i * numLedsProBar + j, pliste[j].r,
+					pliste[j].g  * dim[1], pliste[j].b * dim[2]);
+		}
+	}
+}
+
 void Pattern::drawPixel(int x, int y) {
 
 			ledscape_set_color(frame,
@@ -157,4 +172,11 @@ void Pattern::drawPixel(int x, int y) {
 					colors[color].b  * dim[1], colors[color].c * dim[2]);
 
 
+}
+void Pattern::getPixelColor(int istrip, int ipixel, pixel* ipix){
+	uint8_t r,g,b;
+	ledscape_get_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, istrip*numLedsProBar+ipixel, &r, &g, &b);
+	ipix->r = r;
+	ipix->g = g;
+	ipix->b = b;
 }

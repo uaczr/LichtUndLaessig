@@ -30,8 +30,8 @@ int main() {
 	PatternGenerator generator(8, 108);
 	generator.running = true;
 	boost::asio::io_service io;
-	boost::asio::deadline_timer t(io, boost::posix_time::milliseconds(5));
-	t.async_wait(boost::bind(PatternGenerator::loop, &generator, &t, 5));
+	boost::asio::deadline_timer t(io, boost::posix_time::milliseconds(8));
+	t.async_wait(boost::bind(PatternGenerator::loop, &generator, &t, 8));
 	Musikanalysis musik(&generator);
 	musik.start();
 	std::cout << "m" << std::endl;
