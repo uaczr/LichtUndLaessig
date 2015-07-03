@@ -118,7 +118,7 @@ void Pattern::drawEqual() {
 
 				ledscape_set_color(frame,
 						color_channel_order_from_string(ColorOrder),
-						targetStrip, i * numLedsProBar + j,
+						targetStrip, i * numLedsProBar + (numLedsProBar-1-j),
 						colors[pliste[j].color].a * dim[0], colors[pliste[j].color].b * dim[1],
 						colors[pliste[j].color].c * dim[2]);
 			}
@@ -133,7 +133,7 @@ void Pattern::drawColorEqual() {
 			if (pliste[j].active) {
 				ledscape_set_color(frame,
 						color_channel_order_from_string(ColorOrder),
-						targetStrip, i * numLedsProBar + j, pliste[j].r,
+						targetStrip, i * numLedsProBar + (numLedsProBar-1-j), pliste[j].r,
 						pliste[j].g, pliste[j].b);
 			}
 		}
@@ -146,7 +146,7 @@ void Pattern::drawBar(int i) {
 		if (pliste[j].active == true) {
 			ledscape_set_color(frame,
 					color_channel_order_from_string(ColorOrder), targetStrip,
-					i * numLedsProBar + j, colors[pliste[j].color].a  * dim[0],
+					i * numLedsProBar + (numLedsProBar-1-j), colors[pliste[j].color].a  * dim[0],
 					colors[pliste[j].color].b  * dim[1], colors[pliste[j].color].c * dim[2]);
 		}
 	}
@@ -158,7 +158,7 @@ void Pattern::drawBarColor(int i) {
 		if (pliste[j].active == true) {
 			ledscape_set_color(frame,
 					color_channel_order_from_string(ColorOrder), targetStrip,
-					i * numLedsProBar + j, pliste[j].r,
+					i * numLedsProBar + (numLedsProBar-1-j), pliste[j].r,
 					pliste[j].g  * dim[1], pliste[j].b * dim[2]);
 		}
 	}
@@ -168,14 +168,14 @@ void Pattern::drawPixel(int x, int y) {
 
 			ledscape_set_color(frame,
 					color_channel_order_from_string(ColorOrder), targetStrip,
-					x * numLedsProBar + y, colors[color].a  * dim[0],
+					x * numLedsProBar + (numLedsProBar-1-y), colors[color].a  * dim[0],
 					colors[color].b  * dim[1], colors[color].c * dim[2]);
 
 
 }
 void Pattern::getPixelColor(int istrip, int ipixel, pixel* ipix){
 	uint8_t r,g,b;
-	ledscape_get_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, istrip*numLedsProBar+ipixel, &r, &g, &b);
+	ledscape_get_color(frame, color_channel_order_from_string(ColorOrder), targetStrip, istrip*numLedsProBar+(numLedsProBar-1-ipixel), &r, &g, &b);
 	ipix->r = r;
 	ipix->g = g;
 	ipix->b = b;

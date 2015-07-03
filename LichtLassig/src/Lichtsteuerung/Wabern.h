@@ -30,6 +30,8 @@ private:
 	void DimmingAmbi();
 	void Ambilight();
 	void AmbilightNebel();
+
+	void AmbilightAuto();
 public:
 	Wabern(ledscape_frame_t* iframe , ledscape_pixel_t* icolors, char* iColorOrder, int nBars, int nLedsProBar);
 	virtual ~Wabern();

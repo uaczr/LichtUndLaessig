@@ -48,6 +48,7 @@ class PatternGenerator {
 	Pattern** pattern2;
 	Pattern** pattern3;
 	Pattern** pattern4;
+	Pattern** pattern5;
 	double quadApp(double amp1, double amp2, double deltax, double x);
 	boost::mutex mbeat;
 	boost::mutex mbpm;

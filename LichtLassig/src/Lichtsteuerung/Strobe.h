@@ -15,6 +15,7 @@ private:
 	int switchcounter;
 	int updownpos;
 	bool updown;
+	int pos[3];
 	void event();
 	void noEvent();
 	void tripleShot();
@@ -25,6 +26,7 @@ private:
 	void upanddown();
 	void lowerhalf();
 	void upperhalf();
+	void random();
 
 	void every4();
 	void every8();

@@ -35,6 +35,8 @@ class Balls : public Pattern{
 	void expandimp();
 	void sideways();
 	void moon();
+	void moon2();
+	void mooning();
 	bool dir;
 	double posmoon;
 	double posmoon1;

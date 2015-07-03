@@ -104,6 +104,9 @@ void Balls::event() {
 	case 8:
 		moon();
 		break;
+	case 9:
+		mooning();
+		break;
 	}
 }
 void Balls::noEvent() {
@@ -140,6 +143,43 @@ void Balls::noEvent() {
 	case 8:
 		moon();
 		break;
+	case 9:
+		mooning();
+		break;
+	}
+}
+
+void Balls::mooning() {
+	if (beatcounter % 80 < 16) {
+		moon();
+	}
+	if (beatcounter % 80 < 32 && beatcounter % 80 >= 16) {
+		dim[0] = quadApp(0.0, 1.0, 16, beatcounter % 16);
+		dim[1] = dim[0];
+		dim[2] = dim[1];
+		color = 7;
+		moon2();
+	}
+	if (beatcounter % 80 < 48 && beatcounter % 80 >= 32) {
+		dim[0] = quadApp(1.0, 0.0, 16, beatcounter % 16);
+		dim[1] = dim[0];
+		dim[2] = dim[1];
+		color = 7;
+		moon2();
+	}
+	if (beatcounter % 80 < 64 && beatcounter % 80 >= 48) {
+		dim[0] = quadApp(0.0, 1.0, 16, beatcounter % 16);
+		dim[1] = dim[0];
+		dim[2] = dim[1];
+		color = 6;
+		moon2();
+	}
+	if (beatcounter % 80 < 80 && beatcounter % 80 >= 64) {
+		dim[0] = quadApp(1.0, 0.0, 16, beatcounter % 16);
+		dim[1] = dim[0];
+		dim[2] = dim[1];
+		color = 6;
+		moon2();
 	}
 }
 void Balls::expandimp() {
@@ -170,7 +210,7 @@ void Balls::expandimp() {
 	if (beatcounter == 63) {
 		risingND();
 	}
-	if(counter > targetCycles && counter%targetCycles == 10){
+	if (counter > targetCycles && counter % targetCycles == 10) {
 		beatcounter++;
 	}
 
@@ -594,6 +634,85 @@ void Balls::moon() {
 						i - (posmoon1));
 				pliste[i].b = quadApp((double) 0.3 * colorpix.b, colorpix.b, 3,
 						i - (posmoon1));
+			}
+		}
+		drawColorEqual();
+	}
+}
+
+void Balls::moon2() {
+	if (counter == 0) {
+		if (dir) {
+			dir = false;
+		} else {
+			dir = true;
+		}
+		posmoon = posmoon1;
+	}
+
+	if (counter > targetCycles) {
+		drawColorEqual();
+	} else {
+		if (dir) {
+			for (int i = 0; i < numLedsProBar; i++) {
+				pliste[i].active = false;
+			}
+			posmoon1 = linearApp(posmoon, numLedsProBar - 4, targetCycles,
+					counter);
+			pixel colorpix;
+			//cout << (int) colorpix.r << " " << (int) colorpix.g << " " << (int) colorpix.b << " "<< " " <<(int) posmoon1 + 3 << endl;
+			getPixelColor(1, (int) posmoon1 + 3, &colorpix);
+
+			for (int i = posmoon1 + 1; i <= posmoon1 + 3; i++) {
+				pliste[i].active = true;
+				pliste[i].color = color;
+				pliste[i].r = quadApp(dim[0] * colors[color].a, colorpix.r, 3,
+						i - (posmoon1));
+				pliste[i].g = quadApp(dim[0] * colors[color].b, colorpix.g, 3,
+						i - (posmoon1));
+				pliste[i].b = quadApp(dim[0] * colors[color].c, colorpix.b, 3,
+						i - (posmoon1));
+			}
+			getPixelColor(1, (int) posmoon1 - 2, &colorpix);
+			for (int i = posmoon1 - 2; i <= posmoon1; i++) {
+				pliste[i].active = true;
+				pliste[i].color = color;
+				pliste[i].r = quadApp(colorpix.r, dim[0] * colors[color].a, 3,
+						i - (posmoon1 - 2));
+				pliste[i].g = quadApp(colorpix.g, dim[0] * colors[color].b, 3,
+						i - (posmoon1 - 2));
+				pliste[i].b = quadApp(colorpix.b, dim[0] * colors[color].c, 3,
+						i - (posmoon1 - 2));
+			}
+		} else {
+			for (int i = 0; i < numLedsProBar; i++) {
+				pliste[i].active = false;
+			}
+			posmoon1 = linearApp(posmoon, 2, targetCycles, counter);
+			pixel colorpix;
+			//cout << (int) colorpix.r << " " << (int) colorpix.g << " " << (int) colorpix.b << " " <<(int) posmoon1 + 3 << endl;
+			getPixelColor(1, (int) posmoon1 + 3, &colorpix);
+
+			for (int i = posmoon1 + 1; i <= posmoon1 + 3; i++) {
+				pliste[i].active = true;
+				pliste[i].color = color;
+				pliste[i].r = quadApp(dim[0] * colors[color].a, colorpix.r, 3,
+						i - (posmoon1));
+				pliste[i].g = quadApp(dim[0] * colors[color].b, colorpix.g, 3,
+						i - (posmoon1));
+				pliste[i].b = quadApp(dim[0] * colors[color].c, colorpix.b, 3,
+						i - (posmoon1));
+			}
+			getPixelColor(1, (int) posmoon1 - 2, &colorpix);
+			for (int i = posmoon1 - 2; i <= posmoon1; i++) {
+				pliste[i].active = true;
+				pliste[i].color = color;
+				pliste[i].r = quadApp(colorpix.r, dim[0] * colors[color].a, 3,
+						i - (posmoon1 - 2));
+				pliste[i].g = quadApp(colorpix.g, dim[0] * colors[color].b, 3,
+						i - (posmoon1 - 2));
+				pliste[i].b = quadApp(colorpix.b, dim[0] * colors[color].c, 3,
+						i - (posmoon1 - 2));
 			}
 		}
 		drawColorEqual();

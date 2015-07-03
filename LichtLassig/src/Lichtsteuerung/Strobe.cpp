@@ -44,6 +44,9 @@ Strobe::Strobe(ledscape_frame_t* iframe, ledscape_pixel_t* icolors,
 	dim[1] = 1;
 	dim[2] = 1;
 	generalcounter = 0;
+	pos[0] = 0;
+	pos[1] = 0;
+	pos[3] = 0;
 }
 
 Strobe::~Strobe() {
@@ -89,6 +92,9 @@ void Strobe::event() {
 	case 9:
 		lowerhalf();
 		break;
+	case 10:
+		random();
+		break;
 
 	}
 }
@@ -129,6 +135,9 @@ void Strobe::noEvent() {
 		break;
 	case 9:
 		lowerhalf();
+		break;
+	case 10:
+		random();
 		break;
 	}
 }
@@ -353,6 +362,43 @@ void Strobe::upperhalf() {
 		for (int i = numLedsProBar / 2; i < numLedsProBar; i++) {
 			pliste[i].active = true;
 		}
+		drawEqual();
+	}
+}
+
+void Strobe::random() {
+	for (int i = 0; i < numLedsProBar; i++) {
+		pliste[i].set(false, color, colors[color].a, colors[color].b,
+				colors[color].c);
+	}
+
+	if (strobecounter % (speed) == 0)
+	{
+		pos[0] = ((double)rand() / RAND_MAX) * (numBars*numLedsProBar -1);
+		pos[1] = ((double)rand() / RAND_MAX) * (numBars*numLedsProBar -1);
+		pos[2] = ((double)rand() / RAND_MAX) * (numBars*numLedsProBar -1);
+		//cout << pos[0] << " " << pos[1] << " " << pos[2] << endl;
+	}
+
+	if (strobecounter % (speed) < 3) {
+		ledscape_set_color(frame,
+									color_channel_order_from_string(ColorOrder),targetStrip,
+									pos[0],
+									colors[color].a,
+									colors[color].b,
+									colors[color].c);
+		ledscape_set_color(frame,
+											color_channel_order_from_string(ColorOrder),targetStrip,
+											pos[1],
+											colors[color].a,
+											colors[color].b,
+											colors[color].c);
+		ledscape_set_color(frame,
+											color_channel_order_from_string(ColorOrder),targetStrip,
+											pos[2],
+											colors[color].a,
+											colors[color].b,
+											colors[color].c);
 		drawEqual();
 	}
 }

@@ -113,6 +113,13 @@ void Wabern::noEvent() {
 	}
 }
 
+
+
+
+
+
+
+
 void Wabern::Dimming() {
 	if (beatcounter % 128 < 64) {
 		dim[0] = quadApp(1, 0.1, 64, beatcounter % 128);

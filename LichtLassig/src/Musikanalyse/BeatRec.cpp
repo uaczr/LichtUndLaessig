@@ -113,9 +113,9 @@ BeatRec::myProcess(realvec& in, realvec& out)
 	  autoset3 = 0.6;
   }
   else if(counter == 1){
-	  autoset = 1.8;
-	  autoset2 = 1.8;
-	  autoset3 = 1.8;
+	  autoset = 18;
+	  autoset2 = 18;
+	  autoset3 = 18;
   }
   else if(counter == frontier + 20)
   {
